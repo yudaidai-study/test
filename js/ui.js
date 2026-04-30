@@ -1,4 +1,4 @@
-const CATEGORY_LABEL = { work: '仕事', personal: '個人' };
+const CATEGORY_LABEL = { work: '仕事', personal: '個人', shopping: '買い物' };
 
 let _filter = 'all';
 let _revealedItem = null;
@@ -28,11 +28,11 @@ function deadlineScore(dl) {
 function deadlineHtml(dl) {
   const d = DL_COMPAT[dl] ?? dl;
   if (!d || d === 'none') return '';
-  if (d === 'soon' || d === 'days3') return '<span class="todo-deadline dl-soon">すぐ</span>';
-  if (d === 'week')  return '<span class="todo-deadline dl-week">今週まで</span>';
-  if (d === 'month') return '<span class="todo-deadline dl-month">今月まで</span>';
+  if (d === 'soon' || d === 'days3') return '<span class="todo-deadline">すぐ</span>';
+  if (d === 'week')  return '<span class="todo-deadline">今週まで</span>';
+  if (d === 'month') return '<span class="todo-deadline">今月まで</span>';
   const date = new Date(d + 'T00:00:00');
-  return `<span class="todo-deadline dl-date">${date.getMonth() + 1}/${date.getDate()}まで</span>`;
+  return `<span class="todo-deadline">${date.getMonth() + 1}/${date.getDate()}まで</span>`;
 }
 
 function isDueSoon(dl) {
@@ -50,8 +50,8 @@ function escHtml(str) {
 
 export const ui = {
   render(todos, pendingCount = 0) {
-    const list     = document.getElementById('todo-list');
-    const emptyMsg = document.getElementById('empty-msg');
+    const list        = document.getElementById('todo-list');
+    const emptyMsg    = document.getElementById('empty-msg');
     const organizeBtn = document.getElementById('btn-organize');
 
     const active  = todos.filter(t => !t.completed && !t.pendingComplete)
@@ -130,29 +130,28 @@ export const ui = {
         onRemove(id);
         return;
       }
-      // Dismiss overlay without acting if it was visible
-      if (_revealedItem) {
-        dismissReveal();
-        return;
-      }
-      if (e.target.closest('.check-btn')) {
-        onToggle(id);
-        return;
-      }
+      if (_revealedItem) { dismissReveal(); return; }
+      if (e.target.closest('.check-btn')) { onToggle(id); return; }
       // Tap on card body = edit
       onEdit(id);
     });
 
+    // + button: always open modal
     document.getElementById('btn-add').addEventListener('click', () => {
       const text = ui.getInputValue();
-      if (text) ui.openModal({ mode: 'add', text }, onAdd);
+      if (!text) return;
+      const defaultCategory = ['personal', 'work', 'shopping'].includes(_filter) ? _filter : 'personal';
+      ui.openModal({ mode: 'add', text, category: defaultCategory }, onAdd);
     });
 
+    // Enter key: quick-add directly without modal
     document.getElementById('new-todo').addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        const text = ui.getInputValue();
-        if (text) ui.openModal({ mode: 'add', text }, onAdd);
-      }
+      if (e.key !== 'Enter') return;
+      const text = ui.getInputValue();
+      if (!text) return;
+      const category = ['personal', 'work', 'shopping'].includes(_filter) ? _filter : 'personal';
+      onAdd({ text, priority: 'medium', category, deadline: null });
+      ui.clearInput();
     });
 
     setupSwipe(onRemove);
@@ -168,6 +167,8 @@ export const ui = {
     const okBtn       = document.getElementById('modal-ok');
     const dlDateRow   = document.getElementById('deadline-date-row');
     const dlDateInput = document.getElementById('deadline-date');
+    const priSection  = document.getElementById('priority-section');
+    const dlSection   = document.getElementById('deadline-section');
 
     modal.classList.remove('hidden');
 
@@ -180,16 +181,23 @@ export const ui = {
       okBtn.textContent = '追加';
     }
 
-    document.querySelectorAll('#priority-group .chip').forEach(c => c.classList.remove('active'));
-    document.querySelector(`[data-priority="${priority}"]`)?.classList.add('active');
-
+    // Category
     document.querySelectorAll('#category-group .chip').forEach(c => c.classList.remove('active'));
     document.querySelector(`[data-category="${category}"]`)?.classList.add('active');
 
+    // Show/hide priority+deadline based on category
+    const isShop = category === 'shopping';
+    priSection.classList.toggle('hidden', isShop);
+    dlSection.classList.toggle('hidden', isShop);
+
+    // Priority
+    document.querySelectorAll('#priority-group .chip').forEach(c => c.classList.remove('active'));
+    document.querySelector(`[data-priority="${priority}"]`)?.classList.add('active');
+
+    // Deadline
     document.querySelectorAll('#deadline-group .chip').forEach(c => c.classList.remove('active'));
     dlDateRow.classList.add('hidden');
-    const dlNorm = DL_COMPAT[deadline] ?? deadline;
-    // map removed 'days3' to 'soon' in modal
+    const dlNorm  = DL_COMPAT[deadline] ?? deadline;
     const dlModal = dlNorm === 'days3' ? 'soon' : dlNorm;
     if (!dlModal || dlModal === 'none') {
       document.querySelector('[data-deadline="none"]')?.classList.add('active');
@@ -217,6 +225,9 @@ export const ui = {
       if (!chip) return;
       document.querySelectorAll('#category-group .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
+      const shop = chip.dataset.category === 'shopping';
+      priSection.classList.toggle('hidden', shop);
+      dlSection.classList.toggle('hidden', shop);
     };
 
     document.getElementById('deadline-group').onclick = e => {
@@ -254,14 +265,9 @@ function setupSwipe(onRemove) {
 
   list.addEventListener('touchstart', e => {
     const item = e.target.closest('.todo-item');
-
-    // Touching the currently revealed overlay → let click handle it
     if (_revealedItem && item === _revealedItem && e.target.closest('.delete-overlay')) return;
-
     dismissReveal();
-
     if (!item || e.target.closest('.check-btn')) return;
-
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     activeItem = item;

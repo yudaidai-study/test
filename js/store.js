@@ -67,8 +67,6 @@ export const store = {
     return todos;
   },
 
-  // First click: mark as pendingComplete (strikethrough in place)
-  // Second click: unmark. Clicking a fully-completed task restores it.
   toggle(id) {
     const todos = load().map(t => {
       if (t.id !== id) return t;
@@ -81,7 +79,6 @@ export const store = {
     return todos;
   },
 
-  // Move all pendingComplete tasks to completed (called by 整理 button)
   organizeCompleted() {
     const now = Date.now();
     const todos = load().map(t =>
@@ -101,8 +98,9 @@ export const store = {
 
   getFiltered(filter) {
     const all = load();
-    if (filter === 'all')       return all.filter(t => !t.completed);
+    if (filter === 'all')       return all.filter(t => !t.completed && t.category !== 'shopping');
     if (filter === 'completed') return all.filter(t =>  t.completed);
+    if (filter === 'shopping')  return all.filter(t => !t.completed && t.category === 'shopping');
     return all.filter(t => !t.completed && t.category === filter);
   },
 
