@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <!-- PWA / iPhone home screen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Todo">
+  <meta name="theme-color" content="#007AFF">
+  <link rel="apple-touch-icon" href="/test/icons/apple-touch-icon.png">
+  <link rel="manifest" href="/test/manifest.json">
+
+  <title>Todo</title>
+  <link rel="stylesheet" href="/test/css/app.css">
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <h1>Todo</h1>
+    </header>
+
+    <div class="filter-tabs" role="tablist">
+      <button class="tab active" data-filter="all"    role="tab" aria-selected="true">すべて</button>
+      <button class="tab"        data-filter="work"   role="tab">仕事</button>
+      <button class="tab"        data-filter="personal" role="tab">個人</button>
+      <button class="tab"        data-filter="urgent" role="tab">緊急</button>
+    </div>
+
+    <main>
+      <div id="banner" class="banner hidden" role="alert"></div>
+
+      <ul id="todo-list" role="list"></ul>
+
+      <p id="empty-msg" class="empty-msg hidden">タスクがありません</p>
+    </main>
+
+    <footer class="add-bar">
+      <input
+        type="text"
+        id="new-todo"
+        placeholder="タスクを入力..."
+        autocomplete="off"
+        autocorrect="off"
+        maxlength="200"
+      >
+      <button id="btn-add" aria-label="追加">+</button>
+    </footer>
+  </div>
+
+  <!-- Priority / category modal -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="優先度とカテゴリを選択">
+    <div class="modal-card">
+      <p class="modal-title">優先度</p>
+      <div class="modal-row" id="priority-group">
+        <button class="chip chip-high   active" data-priority="high">高</button>
+        <button class="chip chip-medium"        data-priority="medium">中</button>
+        <button class="chip chip-low"           data-priority="low">低</button>
+      </div>
+      <p class="modal-title">カテゴリ</p>
+      <div class="modal-row" id="category-group">
+        <button class="chip active" data-category="work">仕事</button>
+        <button class="chip"        data-category="personal">個人</button>
+        <button class="chip"        data-category="urgent">緊急</button>
+        <button class="chip"        data-category="other">その他</button>
+      </div>
+      <div class="modal-actions">
+        <button id="modal-cancel">キャンセル</button>
+        <button id="modal-ok" class="btn-primary">追加</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/test/js/sw-register.js"></script>
+  <script type="module" src="/test/js/app.js"></script>
+</body>
+</html>
