@@ -51,6 +51,9 @@ ul { list-style: none; }
 
 /* ---------- Header ---------- */
 .app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: var(--surface-1);
   border-bottom: 1px solid var(--sep);
   padding: 14px 20px 12px;
@@ -62,6 +65,16 @@ ul { list-style: none; }
   color: var(--blue);
   letter-spacing: -0.5px;
 }
+
+#btn-organize {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--blue);
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 8px;
+}
+#btn-organize:disabled { color: var(--text-2); }
 
 /* ---------- Filter tabs ---------- */
 .filter-tabs {
@@ -78,8 +91,8 @@ ul { list-style: none; }
 .tab {
   flex-shrink: 0;
   padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 600;
   color: var(--text-2);
   border-bottom: 2px solid transparent;
   min-height: 44px;
@@ -87,6 +100,18 @@ ul { list-style: none; }
 .tab.active {
   color: var(--blue);
   border-bottom-color: var(--blue);
+}
+
+/* 完了タブだけ目立たなく */
+.tab.tab-done {
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 0.55;
+}
+.tab.tab-done.active {
+  color: var(--text-2);
+  border-bottom-color: var(--sep);
+  opacity: 0.75;
 }
 
 /* ---------- Main scroll area ---------- */
@@ -134,7 +159,22 @@ main {
 .todo-item.priority-high   { border-left-color: var(--red); }
 .todo-item.priority-medium { border-left-color: var(--orange); }
 .todo-item.priority-low    { border-left-color: var(--green); }
-.todo-item.completed       { opacity: 0.45; }
+
+/* Pending complete: strikethrough, stays in current list */
+.todo-item.pending-complete { opacity: 0.55; }
+.todo-item.pending-complete .todo-text {
+  text-decoration: line-through;
+  color: var(--text-2);
+}
+.todo-item.pending-complete .check-btn { color: var(--green); }
+
+/* Fully completed (shown in 完了 tab) */
+.todo-item.completed { opacity: 0.45; }
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  color: var(--text-2);
+}
+.todo-item.completed .check-btn { color: var(--green); }
 
 /* Check button */
 .check-btn {
@@ -151,7 +191,6 @@ main {
   color: var(--surface-3);
   border-radius: 50%;
 }
-.todo-item.completed .check-btn { color: var(--green); }
 
 /* Task body */
 .todo-body {
@@ -167,18 +206,13 @@ main {
   line-height: 1.4;
   word-break: break-word;
 }
-.todo-item.completed .todo-text {
-  text-decoration: line-through;
-  color: var(--text-2);
-}
 
-.todo-deadline {
-  font-size: 11px;
-  font-weight: 500;
-}
-.todo-deadline.dl-today { color: var(--red); }
+/* Deadline badges */
+.todo-deadline { font-size: 11px; font-weight: 500; }
+.todo-deadline.dl-soon  { color: var(--red); }
+.todo-deadline.dl-days3 { color: var(--orange); }
 .todo-deadline.dl-week  { color: var(--orange); }
-.todo-deadline.dl-later { color: var(--text-2); }
+.todo-deadline.dl-month { color: var(--blue); }
 .todo-deadline.dl-date  { color: var(--blue); }
 
 /* Category badge */
@@ -191,7 +225,7 @@ main {
   padding: 2px 7px;
 }
 
-/* Delete button */
+/* Delete button (×) */
 .delete-btn {
   flex-shrink: 0;
   width: 44px;
@@ -206,21 +240,22 @@ main {
 }
 .delete-btn:active { color: var(--red); }
 
-/* Swipe overlay */
+/* Swipe overlay — stays visible until tapped to confirm */
 .delete-overlay {
   position: absolute;
   right: 0; top: 0; bottom: 0;
-  width: 80px;
+  width: 88px;
   background: var(--red);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   transform: translateX(100%);
   transition: transform 0.2s;
   border-radius: 0 12px 12px 0;
+  cursor: pointer;
 }
 .todo-item.reveal-delete .delete-overlay { transform: translateX(0); }
 
@@ -318,10 +353,10 @@ main {
   display: flex;
   align-items: center;
 }
-.chip.active         { background: var(--blue);   border-color: var(--blue);   color: #fff; }
-.chip-high.active    { background: var(--red);    border-color: var(--red); }
-.chip-medium.active  { background: var(--orange); border-color: var(--orange); }
-.chip-low.active     { background: var(--green);  border-color: var(--green); }
+.chip.active        { background: var(--blue);   border-color: var(--blue);   color: #fff; }
+.chip-high.active   { background: var(--red);    border-color: var(--red); }
+.chip-medium.active { background: var(--orange); border-color: var(--orange); }
+.chip-low.active    { background: var(--green);  border-color: var(--green); }
 
 /* Edit textarea */
 .edit-textarea {

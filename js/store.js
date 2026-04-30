@@ -49,6 +49,7 @@ export const store = {
       id: makeId(),
       text,
       completed: false,
+      pendingComplete: false,
       priority,
       category,
       deadline,
@@ -66,10 +67,26 @@ export const store = {
     return todos;
   },
 
+  // First click: mark as pendingComplete (strikethrough in place)
+  // Second click: unmark. Clicking a fully-completed task restores it.
   toggle(id) {
+    const todos = load().map(t => {
+      if (t.id !== id) return t;
+      if (t.completed) {
+        return { ...t, completed: false, pendingComplete: false, completedAt: null };
+      }
+      return { ...t, pendingComplete: !t.pendingComplete };
+    });
+    persist(todos);
+    return todos;
+  },
+
+  // Move all pendingComplete tasks to completed (called by 整理 button)
+  organizeCompleted() {
+    const now = Date.now();
     const todos = load().map(t =>
-      t.id === id
-        ? { ...t, completed: !t.completed, completedAt: !t.completed ? Date.now() : null }
+      t.pendingComplete
+        ? { ...t, completed: true, pendingComplete: false, completedAt: now }
         : t
     );
     persist(todos);
@@ -87,5 +104,9 @@ export const store = {
     if (filter === 'all')       return all.filter(t => !t.completed);
     if (filter === 'completed') return all.filter(t =>  t.completed);
     return all.filter(t => !t.completed && t.category === filter);
+  },
+
+  getPendingCount() {
+    return load().filter(t => t.pendingComplete && !t.completed).length;
   },
 };

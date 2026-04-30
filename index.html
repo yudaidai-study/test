@@ -16,13 +16,14 @@
   <div id="app">
     <header class="app-header">
       <h1>Todo</h1>
+      <button id="btn-organize" aria-label="整理">整理</button>
     </header>
 
     <div class="filter-tabs" role="tablist">
       <button class="tab active" data-filter="all"       role="tab" aria-selected="true">すべて</button>
-      <button class="tab"        data-filter="work"      role="tab">仕事</button>
       <button class="tab"        data-filter="personal"  role="tab">個人</button>
-      <button class="tab"        data-filter="completed" role="tab">完了</button>
+      <button class="tab"        data-filter="work"      role="tab">仕事</button>
+      <button class="tab tab-done" data-filter="completed" role="tab">完了</button>
     </div>
 
     <main>
@@ -62,16 +63,17 @@
 
       <p class="modal-title">カテゴリ</p>
       <div class="modal-row" id="category-group">
-        <button class="chip" data-category="work">仕事</button>
         <button class="chip" data-category="personal">個人</button>
+        <button class="chip" data-category="work">仕事</button>
       </div>
 
       <p class="modal-title">期限</p>
       <div class="modal-row" id="deadline-group">
         <button class="chip" data-deadline="none">なし</button>
-        <button class="chip" data-deadline="today">今日</button>
+        <button class="chip" data-deadline="soon">すぐ</button>
+        <button class="chip" data-deadline="days3">3日以内</button>
         <button class="chip" data-deadline="week">今週</button>
-        <button class="chip" data-deadline="later">来週以降</button>
+        <button class="chip" data-deadline="month">今月</button>
         <button class="chip" data-deadline="date">日付指定</button>
       </div>
       <div id="deadline-date-row" class="hidden">
