@@ -162,6 +162,13 @@ main {
   padding: 2px 7px;
 }
 
+/* Completion date (shown in 完了 tab) */
+.todo-date {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: #aeaeb2;
+}
+
 /* Delete button */
 .delete-btn {
   flex-shrink: 0;

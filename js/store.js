@@ -80,7 +80,11 @@ export const store = {
 
   getFiltered(filter) {
     const all = load();
-    if (filter === 'all') return all;
-    return all.filter(t => t.category === filter);
+    if (filter === 'done') {
+      return all
+        .filter(t => t.completed)
+        .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+    }
+    return all.filter(t => t.category === filter && !t.completed);
   },
 };
