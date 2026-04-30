@@ -1,7 +1,7 @@
 const CATEGORY_LABEL = { work: '仕事', personal: '個人' };
 
 let _filter = 'all';
-let _revealedItem = null; // item whose swipe-delete overlay is currently visible
+let _revealedItem = null;
 
 function dismissReveal() {
   if (_revealedItem) {
@@ -10,7 +10,6 @@ function dismissReveal() {
   }
 }
 
-// Maps old deadline keys for backward compatibility
 const DL_COMPAT = { today: 'soon', later: 'month' };
 
 function deadlineScore(dl) {
@@ -29,12 +28,19 @@ function deadlineScore(dl) {
 function deadlineHtml(dl) {
   const d = DL_COMPAT[dl] ?? dl;
   if (!d || d === 'none') return '';
-  if (d === 'soon')  return '<span class="todo-deadline dl-soon">すぐ</span>';
-  if (d === 'days3') return '<span class="todo-deadline dl-days3">3日以内</span>';
+  if (d === 'soon' || d === 'days3') return '<span class="todo-deadline dl-soon">すぐ</span>';
   if (d === 'week')  return '<span class="todo-deadline dl-week">今週まで</span>';
   if (d === 'month') return '<span class="todo-deadline dl-month">今月まで</span>';
   const date = new Date(d + 'T00:00:00');
   return `<span class="todo-deadline dl-date">${date.getMonth() + 1}/${date.getDate()}まで</span>`;
+}
+
+function isDueSoon(dl) {
+  if (!dl || dl === 'none') return false;
+  if (dl === 'soon' || dl === 'days3' || dl === 'today') return true;
+  if (dl === 'week' || dl === 'month' || dl === 'later') return false;
+  const days = (new Date(dl + 'T00:00:00') - new Date()) / 86400000;
+  return days <= 3;
 }
 
 function escHtml(str) {
@@ -48,7 +54,6 @@ export const ui = {
     const emptyMsg = document.getElementById('empty-msg');
     const organizeBtn = document.getElementById('btn-organize');
 
-    // Sort: active → pendingComplete → completed
     const active  = todos.filter(t => !t.completed && !t.pendingComplete)
                          .sort((a, b) => deadlineScore(a.deadline) - deadlineScore(b.deadline));
     const pending = todos.filter(t => !t.completed &&  t.pendingComplete)
@@ -60,17 +65,17 @@ export const ui = {
     list.innerHTML = sorted.map(t => {
       const isDone     = t.completed || t.pendingComplete;
       const stateClass = t.completed ? ' completed' : (t.pendingComplete ? ' pending-complete' : '');
+      const dueSoon    = isDueSoon(t.deadline) && !t.completed && !t.pendingComplete;
       return `
-        <li class="todo-item priority-${t.priority}${stateClass}" data-id="${t.id}">
+        <li class="todo-item priority-${t.priority}${stateClass}${dueSoon ? ' due-soon' : ''}" data-id="${t.id}">
           <button class="check-btn" aria-label="${isDone ? '未完了に戻す' : '完了にする'}">
             ${isDone ? '✓' : '○'}
           </button>
-          <div class="todo-body">
-            <span class="todo-text">${escHtml(t.text)}</span>
+          <span class="todo-text">${escHtml(t.text)}</span>
+          <div class="todo-meta">
+            <span class="todo-category">${escHtml(CATEGORY_LABEL[t.category] ?? t.category)}</span>
             ${deadlineHtml(t.deadline)}
           </div>
-          <span class="todo-category">${escHtml(CATEGORY_LABEL[t.category] ?? t.category)}</span>
-          <button class="delete-btn" aria-label="削除">✕</button>
           <div class="delete-overlay">削除</div>
         </li>
       `;
@@ -125,17 +130,17 @@ export const ui = {
         onRemove(id);
         return;
       }
-      if (e.target.closest('.check-btn')) {
+      // Dismiss overlay without acting if it was visible
+      if (_revealedItem) {
         dismissReveal();
+        return;
+      }
+      if (e.target.closest('.check-btn')) {
         onToggle(id);
         return;
       }
-      if (e.target.closest('.delete-btn')) {
-        dismissReveal();
-        onRemove(id);
-        return;
-      }
-      dismissReveal();
+      // Tap on card body = edit
+      onEdit(id);
     });
 
     document.getElementById('btn-add').addEventListener('click', () => {
@@ -150,7 +155,7 @@ export const ui = {
       }
     });
 
-    setupTouchGestures(onRemove, onEdit);
+    setupSwipe(onRemove);
   },
 
   openModal(
@@ -175,22 +180,21 @@ export const ui = {
       okBtn.textContent = '追加';
     }
 
-    // Priority
     document.querySelectorAll('#priority-group .chip').forEach(c => c.classList.remove('active'));
     document.querySelector(`[data-priority="${priority}"]`)?.classList.add('active');
 
-    // Category
     document.querySelectorAll('#category-group .chip').forEach(c => c.classList.remove('active'));
     document.querySelector(`[data-category="${category}"]`)?.classList.add('active');
 
-    // Deadline (normalize old values)
     document.querySelectorAll('#deadline-group .chip').forEach(c => c.classList.remove('active'));
     dlDateRow.classList.add('hidden');
     const dlNorm = DL_COMPAT[deadline] ?? deadline;
-    if (!dlNorm || dlNorm === 'none') {
+    // map removed 'days3' to 'soon' in modal
+    const dlModal = dlNorm === 'days3' ? 'soon' : dlNorm;
+    if (!dlModal || dlModal === 'none') {
       document.querySelector('[data-deadline="none"]')?.classList.add('active');
-    } else if (['soon', 'days3', 'week', 'month'].includes(dlNorm)) {
-      document.querySelector(`[data-deadline="${dlNorm}"]`)?.classList.add('active');
+    } else if (['soon', 'week', 'month'].includes(dlModal)) {
+      document.querySelector(`[data-deadline="${dlModal}"]`)?.classList.add('active');
     } else {
       document.querySelector('[data-deadline="date"]')?.classList.add('active');
       dlDateInput.value = deadline;
@@ -231,7 +235,7 @@ export const ui = {
       const category = document.querySelector('#category-group .chip.active')?.dataset.category ?? 'personal';
       const dlChip   = document.querySelector('#deadline-group .chip.active')?.dataset.deadline ?? 'none';
       let deadline = null;
-      if (['soon', 'days3', 'week', 'month'].includes(dlChip)) {
+      if (['soon', 'week', 'month'].includes(dlChip)) {
         deadline = dlChip;
       } else if (dlChip === 'date') {
         deadline = dlDateInput.value || null;
@@ -244,49 +248,32 @@ export const ui = {
   },
 };
 
-function setupTouchGestures(onRemove, onEdit) {
+function setupSwipe(onRemove) {
   const list = document.getElementById('todo-list');
-  let startX = 0, startY = 0, activeItem = null;
-  let pressTimer = null, gesture = null;
-
-  function cancelPress() {
-    clearTimeout(pressTimer);
-    pressTimer = null;
-  }
+  let startX = 0, startY = 0, activeItem = null, gesture = null;
 
   list.addEventListener('touchstart', e => {
     const item = e.target.closest('.todo-item');
 
-    // If touching the currently revealed overlay → let the click handler take it
+    // Touching the currently revealed overlay → let click handle it
     if (_revealedItem && item === _revealedItem && e.target.closest('.delete-overlay')) return;
 
-    // Touching anywhere else dismisses revealed overlay
     dismissReveal();
 
-    if (!item || e.target.closest('.check-btn') || e.target.closest('.delete-btn')) return;
+    if (!item || e.target.closest('.check-btn')) return;
 
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
     activeItem = item;
     gesture = null;
-
-    pressTimer = setTimeout(() => {
-      if (gesture !== 'swipe') {
-        gesture = 'press';
-        navigator.vibrate?.(30);
-        onEdit(activeItem?.dataset.id);
-        activeItem = null;
-      }
-    }, 500);
   }, { passive: true });
 
   list.addEventListener('touchmove', e => {
     if (!activeItem) return;
     const dx = e.touches[0].clientX - startX;
     const dy = e.touches[0].clientY - startY;
-    if (Math.abs(dy) > Math.abs(dx)) { cancelPress(); activeItem = null; return; }
+    if (Math.abs(dy) > Math.abs(dx)) { activeItem = null; return; }
     gesture = 'swipe';
-    cancelPress();
     if (dx < -50) {
       activeItem.classList.add('reveal-delete');
     } else {
@@ -296,13 +283,10 @@ function setupTouchGestures(onRemove, onEdit) {
   }, { passive: true });
 
   list.addEventListener('touchend', e => {
-    cancelPress();
     if (!activeItem) { activeItem = null; gesture = null; return; }
-
     if (gesture === 'swipe') {
       const dx = e.changedTouches[0].clientX - startX;
       if (dx < -50) {
-        // Keep overlay visible — user must tap "削除" button to confirm
         _revealedItem = activeItem;
       } else {
         activeItem.classList.remove('reveal-delete');
@@ -314,7 +298,6 @@ function setupTouchGestures(onRemove, onEdit) {
   });
 
   list.addEventListener('touchcancel', () => {
-    cancelPress();
     if (activeItem) {
       activeItem.classList.remove('reveal-delete');
       if (_revealedItem === activeItem) _revealedItem = null;
@@ -322,13 +305,4 @@ function setupTouchGestures(onRemove, onEdit) {
     activeItem = null;
     gesture = null;
   });
-
-  // Desktop: long mouse press to edit
-  list.addEventListener('mousedown', e => {
-    const item = e.target.closest('.todo-item');
-    if (!item || e.target.closest('.check-btn') || e.target.closest('.delete-btn') || e.target.closest('.delete-overlay')) return;
-    pressTimer = setTimeout(() => onEdit(item.dataset.id), 500);
-  });
-  list.addEventListener('mouseup',    cancelPress);
-  list.addEventListener('mouseleave', cancelPress);
 }
