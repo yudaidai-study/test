@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Todo">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#007AFF">
   <link rel="apple-touch-icon" href="/test/icons/apple-touch-icon.png">
   <link rel="manifest" href="/test/manifest.json">
   <title>Todo</title>
@@ -20,10 +20,11 @@
     </header>
 
     <div class="filter-tabs" role="tablist">
-      <button class="tab active" data-filter="all"       role="tab" aria-selected="true">すべて</button>
-      <button class="tab"        data-filter="personal"  role="tab">個人</button>
-      <button class="tab"        data-filter="work"      role="tab">仕事</button>
-      <button class="tab tab-done" data-filter="completed" role="tab">完了</button>
+      <button class="tab active"     data-filter="all"       role="tab" aria-selected="true">すべて</button>
+      <button class="tab"            data-filter="personal"  role="tab">個人</button>
+      <button class="tab"            data-filter="work"      role="tab">仕事</button>
+      <button class="tab tab-shop"   data-filter="shopping"  role="tab">買い物</button>
+      <button class="tab tab-done"   data-filter="completed" role="tab">完了</button>
     </div>
 
     <main>
@@ -54,29 +55,36 @@
         <textarea id="edit-text" class="edit-textarea" maxlength="200" rows="2"></textarea>
       </div>
 
-      <p class="modal-title">重要度</p>
-      <div class="modal-row" id="priority-group">
-        <button class="chip chip-high"   data-priority="high">高</button>
-        <button class="chip chip-medium" data-priority="medium">中</button>
-        <button class="chip chip-low"    data-priority="low">低</button>
-      </div>
-
+      <!-- カテゴリ: shown first -->
       <p class="modal-title">カテゴリ</p>
       <div class="modal-row" id="category-group">
-        <button class="chip" data-category="personal">個人</button>
-        <button class="chip" data-category="work">仕事</button>
+        <button class="chip"          data-category="personal">個人</button>
+        <button class="chip"          data-category="work">仕事</button>
+        <button class="chip chip-shop" data-category="shopping">買い物</button>
       </div>
 
-      <p class="modal-title">期限</p>
-      <div class="modal-row" id="deadline-group">
-        <button class="chip" data-deadline="none">なし</button>
-        <button class="chip" data-deadline="soon">すぐ</button>
-        <button class="chip" data-deadline="week">今週</button>
-        <button class="chip" data-deadline="month">今月</button>
-        <button class="chip" data-deadline="date">日付指定</button>
+      <!-- 重要度・期限: hidden for shopping -->
+      <div id="priority-section">
+        <p class="modal-title">重要度</p>
+        <div class="modal-row" id="priority-group">
+          <button class="chip chip-high"   data-priority="high">高</button>
+          <button class="chip chip-medium" data-priority="medium">中</button>
+          <button class="chip chip-low"    data-priority="low">低</button>
+        </div>
       </div>
-      <div id="deadline-date-row" class="hidden">
-        <input type="date" id="deadline-date" class="date-input">
+
+      <div id="deadline-section">
+        <p class="modal-title">期限</p>
+        <div class="modal-row" id="deadline-group">
+          <button class="chip"           data-deadline="none">なし</button>
+          <button class="chip"           data-deadline="soon">すぐ</button>
+          <button class="chip"           data-deadline="week">今週</button>
+          <button class="chip"           data-deadline="month">今月</button>
+          <button class="chip chip-date" data-deadline="date">指定</button>
+        </div>
+        <div id="deadline-date-row" class="hidden">
+          <input type="date" id="deadline-date" class="date-input">
+        </div>
       </div>
 
       <div class="modal-actions">

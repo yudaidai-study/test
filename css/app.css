@@ -6,17 +6,18 @@
 }
 
 :root {
-  --bg:        #000000;
-  --surface-1: #1c1c1e;
-  --surface-2: #2c2c2e;
-  --surface-3: #3a3a3c;
-  --text-1:    #ffffff;
+  --bg:        #f2f2f7;
+  --surface-1: #ffffff;
+  --surface-2: #f2f2f7;
+  --surface-3: #e5e5ea;
+  --text-1:    #1c1c1e;
   --text-2:    #8e8e93;
-  --sep:       #38383a;
-  --blue:      #0a84ff;
-  --red:       #ff453a;
-  --orange:    #ff9f0a;
-  --green:     #30d158;
+  --sep:       #d1d1d6;
+  --blue:      #007AFF;
+  --red:       #FF3B30;
+  --orange:    #FF9500;
+  --green:     #34C759;
+  --purple:    #AF52DE;
 }
 
 html, body {
@@ -102,7 +103,13 @@ ul { list-style: none; }
   border-bottom-color: var(--blue);
 }
 
-/* 完了タブ: same color as others, pushed to right end */
+/* 買い物タブ: purple accent */
+.tab.tab-shop.active {
+  color: var(--purple);
+  border-bottom-color: var(--purple);
+}
+
+/* 完了タブ: same style, pushed to right */
 .tab.tab-done {
   margin-left: auto;
 }
@@ -120,10 +127,10 @@ main {
 .banner {
   margin: 0 16px 10px;
   padding: 10px 14px;
-  background: #3a2d00;
+  background: #fff3cd;
   border-radius: 10px;
   font-size: 13px;
-  color: #ffd60a;
+  color: #856404;
 }
 
 /* ---------- Todo list ---------- */
@@ -142,7 +149,8 @@ main {
   border-radius: 12px;
   padding: 12px 14px;
   border-left: 4px solid var(--surface-3);
-  transition: opacity 0.15s, background 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  transition: opacity 0.15s;
   position: relative;
   overflow: hidden;
   user-select: none;
@@ -153,9 +161,9 @@ main {
 .todo-item.priority-medium { border-left-color: var(--orange); }
 .todo-item.priority-low    { border-left-color: var(--green); }
 
-/* Tasks due within 3 days: warm background highlight */
+/* Tasks due within 3 days: subtle red tint */
 .todo-item.due-soon {
-  background: #28201a;
+  background: #fff5f3;
 }
 .todo-item.due-soon .todo-deadline {
   font-size: 12px;
@@ -190,7 +198,7 @@ main {
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  color: var(--surface-3);
+  color: #c7c7cc;
   border-radius: 50%;
 }
 
@@ -220,12 +228,9 @@ main {
   padding: 2px 7px;
 }
 
-/* Deadline badges */
-.todo-deadline { font-size: 11px; font-weight: 500; }
-.todo-deadline.dl-soon  { color: var(--red); }
-.todo-deadline.dl-week  { color: var(--orange); }
-.todo-deadline.dl-month { color: var(--blue); }
-.todo-deadline.dl-date  { color: var(--blue); }
+/* Deadline badges: no color by default, red only when due within 3 days */
+.todo-deadline { font-size: 11px; font-weight: 500; color: var(--text-2); }
+.todo-item.due-soon .todo-deadline { color: var(--red); }
 
 /* Swipe overlay */
 .delete-overlay {
@@ -268,7 +273,7 @@ main {
 .add-bar input {
   flex: 1;
   font-size: 16px;
-  border: 1px solid var(--surface-3);
+  border: 1px solid var(--sep);
   border-radius: 10px;
   padding: 10px 14px;
   outline: none;
@@ -277,7 +282,10 @@ main {
   -webkit-appearance: none;
 }
 .add-bar input::placeholder { color: var(--text-2); }
-.add-bar input:focus { border-color: var(--blue); }
+.add-bar input:focus {
+  border-color: var(--blue);
+  background: var(--surface-1);
+}
 
 #btn-add {
   width: 44px;
@@ -291,15 +299,15 @@ main {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(10,132,255,0.35);
+  box-shadow: 0 2px 6px rgba(0,122,255,0.35);
 }
-#btn-add:active { opacity: 0.8; }
+#btn-add:active { background: #0062cc; }
 
 /* ---------- Modal ---------- */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.4);
   display: flex;
   align-items: flex-end;
   z-index: 100;
@@ -334,7 +342,7 @@ main {
   border-radius: 20px;
   font-size: 15px;
   font-weight: 500;
-  border: 1.5px solid var(--surface-3);
+  border: 1.5px solid var(--sep);
   color: var(--text-2);
   min-height: 44px;
   display: flex;
@@ -345,12 +353,19 @@ main {
 .chip-medium.active { background: var(--orange); border-color: var(--orange); }
 .chip-low.active    { background: var(--green);  border-color: var(--green); }
 
+/* 買い物カテゴリチップ */
+.chip-shop.active   { background: var(--purple); border-color: var(--purple); }
+
+/* 日付指定(指定)チップ: purple border to distinguish */
+.chip-date { border-color: var(--purple); color: var(--purple); }
+.chip-date.active { background: var(--purple); border-color: var(--purple); color: #fff; }
+
 /* Edit textarea */
 .edit-textarea {
   display: block;
   width: 100%;
   background: var(--surface-2);
-  border: 1px solid var(--surface-3);
+  border: 1px solid var(--sep);
   border-radius: 10px;
   color: var(--text-1);
   font-size: 16px;
@@ -367,7 +382,7 @@ main {
   display: block;
   width: 100%;
   background: var(--surface-2);
-  border: 1px solid var(--surface-3);
+  border: 1px solid var(--sep);
   border-radius: 10px;
   color: var(--text-1);
   font-size: 16px;
@@ -392,8 +407,9 @@ main {
   border-radius: 12px;
   font-size: 17px;
   font-weight: 500;
-  border: 1.5px solid var(--surface-3);
+  border: 1.5px solid var(--sep);
   color: var(--text-1);
+  background: var(--surface-1);
 }
 .btn-primary {
   background: var(--blue) !important;
