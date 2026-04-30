@@ -1,6 +1,6 @@
 const CATEGORY_LABEL = { work: '仕事', personal: '個人', urgent: '緊急', other: 'その他' };
 
-let _filter = 'personal';
+let _filter = 'all';
 
 export const ui = {
   render(todos) {
