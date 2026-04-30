@@ -21,6 +21,7 @@
 
     <div class="filter-tabs" role="tablist">
       <button class="tab active"     data-filter="all"       role="tab" aria-selected="true">すべて</button>
+      <div class="tab-separator" role="separator"></div>
       <button class="tab"            data-filter="personal"  role="tab">個人</button>
       <button class="tab"            data-filter="work"      role="tab">仕事</button>
       <button class="tab tab-shop"   data-filter="shopping"  role="tab">買い物</button>
@@ -30,6 +31,10 @@
     <main>
       <div id="banner" class="banner hidden" role="alert"></div>
       <ul id="todo-list" role="list"></ul>
+      <div id="shopping-section" class="shopping-section hidden">
+        <div class="section-divider"><span class="section-label">買い物</span></div>
+        <ul id="shopping-list" role="list"></ul>
+      </div>
       <p id="empty-msg" class="empty-msg hidden">タスクがありません</p>
     </main>
 

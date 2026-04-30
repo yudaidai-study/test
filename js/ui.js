@@ -48,40 +48,64 @@ function escHtml(str) {
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+function renderItems(todos) {
+  return todos.map(t => {
+    const isDone     = t.completed || t.pendingComplete;
+    const stateClass = t.completed ? ' completed' : (t.pendingComplete ? ' pending-complete' : '');
+    const dueSoon    = isDueSoon(t.deadline) && !t.completed && !t.pendingComplete;
+    return `
+      <li class="todo-item priority-${t.priority}${stateClass}${dueSoon ? ' due-soon' : ''}" data-id="${t.id}">
+        <button class="check-btn" aria-label="${isDone ? '未完了に戻す' : '完了にする'}">
+          ${isDone ? '✓' : '○'}
+        </button>
+        <span class="todo-text">${escHtml(t.text)}</span>
+        <div class="todo-meta">
+          <span class="todo-category">${escHtml(CATEGORY_LABEL[t.category] ?? t.category)}</span>
+          ${deadlineHtml(t.deadline)}
+        </div>
+        <div class="delete-overlay">削除</div>
+      </li>
+    `;
+  }).join('');
+}
+
+function sortTodos(todos) {
+  const active  = todos.filter(t => !t.completed && !t.pendingComplete)
+                       .sort((a, b) => deadlineScore(a.deadline) - deadlineScore(b.deadline));
+  const pending = todos.filter(t => !t.completed &&  t.pendingComplete)
+                       .sort((a, b) => deadlineScore(a.deadline) - deadlineScore(b.deadline));
+  const done    = todos.filter(t =>  t.completed)
+                       .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+  return [...active, ...pending, ...done];
+}
+
 export const ui = {
   render(todos, pendingCount = 0) {
-    const list        = document.getElementById('todo-list');
-    const emptyMsg    = document.getElementById('empty-msg');
-    const organizeBtn = document.getElementById('btn-organize');
+    const list            = document.getElementById('todo-list');
+    const shoppingSection = document.getElementById('shopping-section');
+    const shoppingList    = document.getElementById('shopping-list');
+    const emptyMsg        = document.getElementById('empty-msg');
+    const organizeBtn     = document.getElementById('btn-organize');
 
-    const active  = todos.filter(t => !t.completed && !t.pendingComplete)
-                         .sort((a, b) => deadlineScore(a.deadline) - deadlineScore(b.deadline));
-    const pending = todos.filter(t => !t.completed &&  t.pendingComplete)
-                         .sort((a, b) => deadlineScore(a.deadline) - deadlineScore(b.deadline));
-    const done    = todos.filter(t =>  t.completed)
-                         .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
-    const sorted  = [...active, ...pending, ...done];
+    if (_filter === 'all') {
+      // すべてタブ: 通常タスクと買い物タスクを別エリアに表示
+      const regular  = sortTodos(todos.filter(t => t.category !== 'shopping'));
+      const shopping = sortTodos(todos.filter(t => t.category === 'shopping'));
 
-    list.innerHTML = sorted.map(t => {
-      const isDone     = t.completed || t.pendingComplete;
-      const stateClass = t.completed ? ' completed' : (t.pendingComplete ? ' pending-complete' : '');
-      const dueSoon    = isDueSoon(t.deadline) && !t.completed && !t.pendingComplete;
-      return `
-        <li class="todo-item priority-${t.priority}${stateClass}${dueSoon ? ' due-soon' : ''}" data-id="${t.id}">
-          <button class="check-btn" aria-label="${isDone ? '未完了に戻す' : '完了にする'}">
-            ${isDone ? '✓' : '○'}
-          </button>
-          <span class="todo-text">${escHtml(t.text)}</span>
-          <div class="todo-meta">
-            <span class="todo-category">${escHtml(CATEGORY_LABEL[t.category] ?? t.category)}</span>
-            ${deadlineHtml(t.deadline)}
-          </div>
-          <div class="delete-overlay">削除</div>
-        </li>
-      `;
-    }).join('');
-
-    emptyMsg.classList.toggle('hidden', sorted.length > 0);
+      list.innerHTML = renderItems(regular);
+      if (shopping.length > 0) {
+        shoppingSection.classList.remove('hidden');
+        shoppingList.innerHTML = renderItems(shopping);
+      } else {
+        shoppingSection.classList.add('hidden');
+      }
+      emptyMsg.classList.toggle('hidden', regular.length > 0 || shopping.length > 0);
+    } else {
+      shoppingSection.classList.add('hidden');
+      const sorted = sortTodos(todos);
+      list.innerHTML = renderItems(sorted);
+      emptyMsg.classList.toggle('hidden', sorted.length > 0);
+    }
 
     if (organizeBtn) {
       organizeBtn.textContent = pendingCount > 0 ? `整理 (${pendingCount})` : '整理';
@@ -120,11 +144,10 @@ export const ui = {
 
     document.getElementById('btn-organize').addEventListener('click', onOrganize);
 
-    document.getElementById('todo-list').addEventListener('click', e => {
+    function handleListClick(e) {
       const item = e.target.closest('.todo-item');
       if (!item) return;
       const id = item.dataset.id;
-
       if (e.target.closest('.delete-overlay')) {
         dismissReveal();
         onRemove(id);
@@ -132,9 +155,10 @@ export const ui = {
       }
       if (_revealedItem) { dismissReveal(); return; }
       if (e.target.closest('.check-btn')) { onToggle(id); return; }
-      // Tap on card body = edit
       onEdit(id);
-    });
+    }
+    document.getElementById('todo-list').addEventListener('click', handleListClick);
+    document.getElementById('shopping-list').addEventListener('click', handleListClick);
 
     // + button: always open modal
     document.getElementById('btn-add').addEventListener('click', () => {
@@ -154,7 +178,8 @@ export const ui = {
       ui.clearInput();
     });
 
-    setupSwipe(onRemove);
+    setupSwipe('todo-list',     onRemove);
+    setupSwipe('shopping-list', onRemove);
   },
 
   openModal(
@@ -235,7 +260,11 @@ export const ui = {
       if (!chip) return;
       document.querySelectorAll('#deadline-group .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-      dlDateRow.classList.toggle('hidden', chip.dataset.deadline !== 'date');
+      const isDate = chip.dataset.deadline === 'date';
+      dlDateRow.classList.toggle('hidden', !isDate);
+      if (isDate) {
+        try { dlDateInput.showPicker(); } catch (_) {}
+      }
     };
 
     document.getElementById('modal-ok').onclick = () => {
@@ -259,8 +288,9 @@ export const ui = {
   },
 };
 
-function setupSwipe(onRemove) {
-  const list = document.getElementById('todo-list');
+function setupSwipe(listId, onRemove) {
+  const list = document.getElementById(listId);
+  if (!list) return;
   let startX = 0, startY = 0, activeItem = null, gesture = null;
 
   list.addEventListener('touchstart', e => {

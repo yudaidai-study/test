@@ -71,15 +71,21 @@ ul { list-style: none; }
   font-size: 15px;
   font-weight: 500;
   color: var(--blue);
-  min-height: 44px;
-  padding: 0 10px;
+  min-height: 36px;
+  padding: 0 14px;
   border-radius: 8px;
+  border: 1.5px solid var(--blue);
 }
-#btn-organize:disabled { color: var(--text-2); }
+#btn-organize:active { background: rgba(0,122,255,0.08); }
+#btn-organize:disabled {
+  color: var(--text-2);
+  border-color: var(--sep);
+}
 
 /* ---------- Filter tabs ---------- */
 .filter-tabs {
   display: flex;
+  align-items: center;
   background: var(--surface-1);
   padding: 0 12px;
   border-bottom: 1px solid var(--sep);
@@ -88,6 +94,15 @@ ul { list-style: none; }
   scrollbar-width: none;
 }
 .filter-tabs::-webkit-scrollbar { display: none; }
+
+/* すべてタブと他タブの間の区切り線 */
+.tab-separator {
+  flex-shrink: 0;
+  width: 1px;
+  height: 16px;
+  background: var(--sep);
+  margin: 0 4px;
+}
 
 .tab {
   flex-shrink: 0;
@@ -168,10 +183,7 @@ main {
 .todo-item.priority-medium { border-left-color: var(--orange); }
 .todo-item.priority-low    { border-left-color: var(--green); }
 
-/* Tasks due within 3 days: subtle red tint */
-.todo-item.due-soon {
-  background: #fff5f3;
-}
+/* Tasks due within 3 days: deadline text only — no background tint on the whole item */
 .todo-item.due-soon .todo-deadline {
   font-size: 12px;
   font-weight: 600;
@@ -257,6 +269,36 @@ main {
   cursor: pointer;
 }
 .todo-item.reveal-delete .delete-overlay { transform: translateX(0); }
+
+/* ---------- Shopping section (すべてタブ内の買い物エリア) ---------- */
+.shopping-section { margin-top: 8px; }
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 16px 8px;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--sep);
+}
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: 0.3px;
+}
+
+#shopping-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 16px;
+}
 
 /* ---------- Empty state ---------- */
 .empty-msg {
@@ -383,6 +425,16 @@ main {
   margin-bottom: 18px;
 }
 .edit-textarea:focus { border-color: var(--blue); }
+
+/* 期限チップ行: 1行に収める */
+#deadline-group {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+#deadline-group::-webkit-scrollbar { display: none; }
+#deadline-group .chip { flex-shrink: 0; }
 
 /* Date input */
 .date-input {

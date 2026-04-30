@@ -98,7 +98,7 @@ export const store = {
 
   getFiltered(filter) {
     const all = load();
-    if (filter === 'all')       return all.filter(t => !t.completed && t.category !== 'shopping');
+    if (filter === 'all')       return all.filter(t => !t.completed);
     if (filter === 'completed') return all.filter(t =>  t.completed);
     if (filter === 'shopping')  return all.filter(t => !t.completed && t.category === 'shopping');
     return all.filter(t => !t.completed && t.category === filter);
