@@ -71,6 +71,13 @@ ul { list-style: none; }
   color: #007AFF;
   border-bottom-color: #007AFF;
 }
+.tab[data-filter="done"].active {
+  color: #aeaeb2;
+  border-bottom-color: #c7c7cc;
+}
+.tab[data-filter="done"] {
+  color: #c7c7cc;
+}
 
 /* ---------- Main scroll area ---------- */
 main {
