@@ -71,13 +71,6 @@ ul { list-style: none; }
   color: #007AFF;
   border-bottom-color: #007AFF;
 }
-.tab[data-filter="done"].active {
-  color: #aeaeb2;
-  border-bottom-color: #c7c7cc;
-}
-.tab[data-filter="done"] {
-  color: #c7c7cc;
-}
 
 /* ---------- Main scroll area ---------- */
 main {
@@ -167,13 +160,6 @@ main {
   background: #f2f2f7;
   border-radius: 6px;
   padding: 2px 7px;
-}
-
-/* Completion date (shown in 完了 tab) */
-.todo-date {
-  flex-shrink: 0;
-  font-size: 11px;
-  color: #aeaeb2;
 }
 
 /* Delete button */
