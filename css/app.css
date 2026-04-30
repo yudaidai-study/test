@@ -109,16 +109,9 @@ ul { list-style: none; }
   color: #c7c7cc;
 }
 
-/* 完了タブだけ目立たなく */
+/* 完了タブ: same color as others, pushed to right end */
 .tab.tab-done {
-  font-size: 13px;
-  font-weight: 400;
-  opacity: 0.55;
-}
-.tab.tab-done.active {
-  color: var(--text-2);
-  border-bottom-color: var(--sep);
-  opacity: 0.75;
+  margin-left: auto;
 }
 
 /* ---------- Main scroll area ---------- */
@@ -156,7 +149,7 @@ main {
   border-radius: 12px;
   padding: 12px 14px;
   border-left: 4px solid var(--surface-3);
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, background 0.15s;
   position: relative;
   overflow: hidden;
   user-select: none;
@@ -167,7 +160,16 @@ main {
 .todo-item.priority-medium { border-left-color: var(--orange); }
 .todo-item.priority-low    { border-left-color: var(--green); }
 
-/* Pending complete: strikethrough, stays in current list */
+/* Tasks due within 3 days: warm background highlight */
+.todo-item.due-soon {
+  background: #28201a;
+}
+.todo-item.due-soon .todo-deadline {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Pending complete */
 .todo-item.pending-complete { opacity: 0.55; }
 .todo-item.pending-complete .todo-text {
   text-decoration: line-through;
@@ -175,7 +177,7 @@ main {
 }
 .todo-item.pending-complete .check-btn { color: var(--green); }
 
-/* Fully completed (shown in 完了 tab) */
+/* Fully completed (完了 tab) */
 .todo-item.completed { opacity: 0.45; }
 .todo-item.completed .todo-text {
   text-decoration: line-through;
@@ -199,32 +201,25 @@ main {
   border-radius: 50%;
 }
 
-/* Task body */
-.todo-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
+/* Task text */
 .todo-text {
+  flex: 1;
   font-size: 16px;
   line-height: 1.4;
   word-break: break-word;
 }
 
-/* Deadline badges */
-.todo-deadline { font-size: 11px; font-weight: 500; }
-.todo-deadline.dl-soon  { color: var(--red); }
-.todo-deadline.dl-days3 { color: var(--orange); }
-.todo-deadline.dl-week  { color: var(--orange); }
-.todo-deadline.dl-month { color: var(--blue); }
-.todo-deadline.dl-date  { color: var(--blue); }
+/* Right-side meta: category above, deadline below */
+.todo-meta {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
 
 /* Category badge */
 .todo-category {
-  flex-shrink: 0;
   font-size: 11px;
   color: var(--text-2);
   background: var(--surface-2);
@@ -232,22 +227,14 @@ main {
   padding: 2px 7px;
 }
 
-/* Delete button (×) */
-.delete-btn {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--surface-3);
-  font-size: 18px;
-  margin: -9px -9px -9px 0;
-  border-radius: 8px;
-}
-.delete-btn:active { color: var(--red); }
+/* Deadline badges */
+.todo-deadline { font-size: 11px; font-weight: 500; }
+.todo-deadline.dl-soon  { color: var(--red); }
+.todo-deadline.dl-week  { color: var(--orange); }
+.todo-deadline.dl-month { color: var(--blue); }
+.todo-deadline.dl-date  { color: var(--blue); }
 
-/* Swipe overlay — stays visible until tapped to confirm */
+/* Swipe overlay */
 .delete-overlay {
   position: absolute;
   right: 0; top: 0; bottom: 0;
