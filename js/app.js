@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   refresh();
 
   ui.bindEvents({
-    onAdd({ text, priority, category }) {
-      store.add({ text, priority, category });
+    onAdd({ text, priority, category, deadline }) {
+      store.add({ text, priority, category, deadline });
       refresh();
     },
     onToggle(id) {
@@ -26,6 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
     onRemove(id) {
       store.remove(id);
       refresh();
+    },
+    onEdit(id) {
+      const todo = store.getAll().find(t => t.id === id);
+      if (!todo) return;
+      ui.openModal({ mode: 'edit', ...todo }, ({ text, priority, category, deadline }) => {
+        store.update(id, { text, priority, category, deadline });
+        refresh();
+      });
     },
     onFilterChange(filter) {
       currentFilter = filter;
