@@ -437,14 +437,15 @@ main {
   min-height: 36px;
 }
 
-/* Date input: always in DOM, invisible — display:none だと showPicker() が効かない */
+/* Date input: 画面外に配置して常に DOM にレンダリング済みにする
+   width:0/height:0 や display:none は showPicker() を無効にするため使わない */
 .date-input-hidden {
-  position: absolute;
-  width: 0;
-  height: 0;
+  position: fixed;
+  top: -9999px;
+  left: 0;
+  width: 1px;
+  height: 1px;
   opacity: 0;
-  pointer-events: none;
-  overflow: hidden;
 }
 
 /* Date input */

@@ -277,9 +277,13 @@ export const ui = {
       if (!chip) return;
       document.querySelectorAll('#deadline-group .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-      // カレンダーチップ: 日付入力欄は表示せず直接カレンダーを開く
+      // カレンダーチップ: 直接カレンダーを開く
       if (chip.dataset.deadline === 'date') {
-        try { dlDateInput.showPicker(); } catch (_) {}
+        try {
+          dlDateInput.showPicker();
+        } catch (_) {
+          dlDateInput.focus(); // showPicker() 非対応ブラウザ向けフォールバック
+        }
       }
     };
 
