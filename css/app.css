@@ -437,6 +437,16 @@ main {
   min-height: 36px;
 }
 
+/* Date input: always in DOM, invisible — display:none だと showPicker() が効かない */
+.date-input-hidden {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
 /* Date input */
 .date-input {
   display: block;

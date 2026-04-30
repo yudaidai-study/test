@@ -190,7 +190,6 @@ export const ui = {
     const textRow     = document.getElementById('modal-text-row');
     const editText    = document.getElementById('edit-text');
     const okBtn       = document.getElementById('modal-ok');
-    const dlDateRow   = document.getElementById('deadline-date-row');
     const dlDateInput = document.getElementById('deadline-date');
     const priSection  = document.getElementById('priority-section');
     const dlSection   = document.getElementById('deadline-section');
@@ -223,7 +222,7 @@ export const ui = {
     const calChip = document.querySelector('[data-deadline="date"]');
     if (calChip) calChip.textContent = 'カレンダー'; // ラベルをリセット
     document.querySelectorAll('#deadline-group .chip').forEach(c => c.classList.remove('active'));
-    dlDateRow.classList.add('hidden'); // 日付入力欄は常に非表示
+    dlDateInput.value = '';
     const dlNorm  = DL_COMPAT[deadline] ?? deadline;
     const dlModal = dlNorm === 'days3' ? 'soon' : dlNorm;
     if (!dlModal || dlModal === 'none') {
@@ -233,7 +232,6 @@ export const ui = {
     } else {
       calChip?.classList.add('active');
       dlDateInput.value = deadline;
-      // チップに選択済み日付を表示
       if (deadline && calChip) {
         const [, m, d] = deadline.split('-');
         calChip.textContent = `${parseInt(m, 10)}/${parseInt(d, 10)}`;
