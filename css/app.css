@@ -37,6 +37,9 @@ ul { list-style: none; }
   background: #fff;
   border-bottom: 1px solid #d1d1d6;
   padding: 14px 20px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .app-header h1 {
@@ -46,9 +49,26 @@ ul { list-style: none; }
   letter-spacing: -0.5px;
 }
 
+/* 整理 button */
+.btn-organize {
+  padding: 6px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #007AFF;
+  border: 1.5px solid #007AFF;
+  border-radius: 10px;
+  background: transparent;
+  min-height: 36px;
+  line-height: 1;
+}
+.btn-organize:active {
+  background: rgba(0, 122, 255, 0.1);
+}
+
 /* ---------- Filter tabs ---------- */
 .filter-tabs {
   display: flex;
+  align-items: center;
   background: #fff;
   padding: 0 12px 0;
   border-bottom: 1px solid #d1d1d6;
@@ -70,6 +90,15 @@ ul { list-style: none; }
 .tab.active {
   color: #007AFF;
   border-bottom-color: #007AFF;
+}
+
+/* Separator between すべて and other tabs */
+.tab-separator {
+  flex-shrink: 0;
+  width: 1px;
+  height: 18px;
+  background: #d1d1d6;
+  margin: 0 4px;
 }
 
 /* ---------- Main scroll area ---------- */
@@ -152,6 +181,24 @@ main {
   color: #8e8e93;
 }
 
+/* Deadline badge — only the badge is colored for upcoming deadlines */
+.todo-deadline {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: #8e8e93;
+  background: #f2f2f7;
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+.todo-deadline.deadline-soon {
+  color: #FF9500;
+  background: #fff8f0;
+}
+.todo-deadline.deadline-urgent {
+  color: #FF3B30;
+  background: #fff2f2;
+}
+
 /* Category badge */
 .todo-category {
   flex-shrink: 0;
@@ -195,6 +242,39 @@ main {
 }
 .todo-item.reveal-delete .delete-overlay {
   transform: translateX(0);
+}
+
+/* ---------- Shopping section ---------- */
+.shopping-section {
+  margin-top: 8px;
+}
+.shopping-section.hidden { display: none; }
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 16px 8px;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #d1d1d6;
+}
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8e8e93;
+  letter-spacing: 0.3px;
+}
+
+#shopping-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 16px;
 }
 
 /* ---------- Empty state ---------- */
@@ -284,6 +364,18 @@ main {
   margin-bottom: 18px;
 }
 
+/* Deadline row stays on one line */
+.modal-row-deadline {
+  flex-wrap: nowrap;
+}
+
+/* Disabled state for priority / deadline groups */
+#priority-group.disabled,
+#deadline-group.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
 .chip {
   padding: 8px 18px;
   border-radius: 20px;
@@ -303,6 +395,27 @@ main {
 .chip-high.active   { background: #FF3B30; border-color: #FF3B30; }
 .chip-medium.active { background: #FF9500; border-color: #FF9500; }
 .chip-low.active    { background: #34C759; border-color: #34C759; }
+
+/* Deadline date input — styled as a single-line pill */
+.deadline-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  min-height: 44px;
+  border: 1.5px solid #c7c7cc;
+  border-radius: 20px;
+  padding: 8px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #3a3a3c;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+.deadline-input:focus {
+  outline: none;
+  border-color: #007AFF;
+}
 
 .modal-actions {
   display: flex;

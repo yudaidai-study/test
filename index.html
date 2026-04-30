@@ -19,19 +19,27 @@
   <div id="app">
     <header class="app-header">
       <h1>Todo</h1>
+      <button id="btn-organize" class="btn-organize">整理</button>
     </header>
 
     <div class="filter-tabs" role="tablist">
-      <button class="tab active" data-filter="all"    role="tab" aria-selected="true">すべて</button>
-      <button class="tab"        data-filter="work"   role="tab">仕事</button>
-      <button class="tab"        data-filter="personal" role="tab">個人</button>
-      <button class="tab"        data-filter="urgent" role="tab">緊急</button>
+      <button class="tab active" data-filter="all" role="tab" aria-selected="true">すべて</button>
+      <div class="tab-separator" role="separator"></div>
+      <button class="tab" data-filter="personal" role="tab">個人</button>
+      <button class="tab" data-filter="work"     role="tab">仕事</button>
+      <button class="tab" data-filter="shopping" role="tab">買い物</button>
+      <button class="tab" data-filter="done"     role="tab">完了</button>
     </div>
 
     <main>
       <div id="banner" class="banner hidden" role="alert"></div>
 
       <ul id="todo-list" role="list"></ul>
+
+      <div id="shopping-section" class="shopping-section hidden">
+        <div class="section-divider"><span class="section-label">買い物</span></div>
+        <ul id="shopping-list" role="list"></ul>
+      </div>
 
       <p id="empty-msg" class="empty-msg hidden">タスクがありません</p>
     </main>
@@ -49,8 +57,8 @@
     </footer>
   </div>
 
-  <!-- Priority / category modal -->
-  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="優先度とカテゴリを選択">
+  <!-- Priority / category / deadline modal -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="タスクを追加">
     <div class="modal-card">
       <p class="modal-title">優先度</p>
       <div class="modal-row" id="priority-group">
@@ -63,7 +71,12 @@
         <button class="chip active" data-category="work">仕事</button>
         <button class="chip"        data-category="personal">個人</button>
         <button class="chip"        data-category="urgent">緊急</button>
+        <button class="chip"        data-category="shopping">買い物</button>
         <button class="chip"        data-category="other">その他</button>
+      </div>
+      <p class="modal-title">期限</p>
+      <div class="modal-row modal-row-deadline" id="deadline-group">
+        <input type="date" id="deadline-input" class="deadline-input">
       </div>
       <div class="modal-actions">
         <button id="modal-cancel">キャンセル</button>

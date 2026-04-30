@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   refresh();
 
   ui.bindEvents({
-    onAdd({ text, priority, category }) {
-      store.add({ text, priority, category });
+    onAdd({ text, priority, category, deadline }) {
+      store.add({ text, priority, category, deadline });
       refresh();
     },
     onToggle(id) {
@@ -30,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     onFilterChange(filter) {
       currentFilter = filter;
       ui.setFilter(filter);
+      refresh();
+    },
+    onOrganize() {
+      store.removeCompleted();
       refresh();
     },
   });

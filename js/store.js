@@ -46,7 +46,7 @@ export const store = {
 
   getAll() { return load(); },
 
-  add({ text, priority = 'medium', category = 'other' }) {
+  add({ text, priority = 'medium', category = 'other', deadline = null }) {
     const todos = load();
     const todo = {
       id: makeId(),
@@ -54,6 +54,7 @@ export const store = {
       completed: false,
       priority,
       category,
+      deadline,
       createdAt: Date.now(),
       completedAt: null,
     };
@@ -78,9 +79,16 @@ export const store = {
     return todos;
   },
 
+  removeCompleted() {
+    const todos = load().filter(t => !t.completed);
+    persist(todos);
+    return todos;
+  },
+
   getFiltered(filter) {
     const all = load();
-    if (filter === 'all') return all;
-    return all.filter(t => t.category === filter);
+    if (filter === 'done') return all.filter(t => t.completed);
+    if (filter === 'all')  return all.filter(t => !t.completed);
+    return all.filter(t => t.category === filter && !t.completed);
   },
 };
