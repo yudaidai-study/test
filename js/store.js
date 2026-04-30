@@ -85,6 +85,9 @@ export const store = {
         .filter(t => t.completed)
         .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
     }
+    if (filter === 'all') {
+      return all.filter(t => (t.category === 'personal' || t.category === 'work') && !t.completed);
+    }
     return all.filter(t => t.category === filter && !t.completed);
   },
 };

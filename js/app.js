@@ -1,7 +1,7 @@
 import { store } from './store.js';
 import { ui }    from './ui.js';
 
-let currentFilter = 'personal';
+let currentFilter = 'all';
 
 function refresh() {
   ui.render(store.getFiltered(currentFilter));
