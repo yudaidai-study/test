@@ -1,4 +1,5 @@
 const CATEGORY_LABEL = { work: '仕事', personal: '個人', urgent: '緊急', other: 'その他' };
+const CHECK_ICON = { done: '✓', todo: '○' };
 
 let _filter = 'all';
 
@@ -7,31 +8,22 @@ export const ui = {
     const list = document.getElementById('todo-list');
     const emptyMsg = document.getElementById('empty-msg');
 
-    const sorted = _filter === 'done'
-      ? todos  // already sorted by completedAt desc from store
-      : [...todos].sort((a, b) => b.createdAt - a.createdAt);
+    // Sort: active first (by createdAt desc), completed last (by completedAt desc)
+    const active = todos.filter(t => !t.completed).sort((a, b) => b.createdAt - a.createdAt);
+    const done   = todos.filter(t =>  t.completed).sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+    const sorted = [...active, ...done];
 
-    list.innerHTML = sorted.map(t => {
-      if (_filter === 'done') {
-        return `
-      <li class="todo-item priority-${t.priority} completed" data-id="${t.id}">
-        <button class="check-btn" aria-label="元に戻す">✓</button>
-        <span class="todo-text">${escHtml(t.text)}</span>
-        <span class="todo-category">${CATEGORY_LABEL[t.category] ?? t.category}</span>
-        <span class="todo-date">${formatDate(t.completedAt)}</span>
-        <button class="delete-btn" aria-label="削除">✕</button>
-        <div class="delete-overlay">削除</div>
-      </li>`;
-      }
-      return `
-      <li class="todo-item priority-${t.priority}" data-id="${t.id}">
-        <button class="check-btn" aria-label="完了にする">○</button>
+    list.innerHTML = sorted.map(t => `
+      <li class="todo-item priority-${t.priority} ${t.completed ? 'completed' : ''}" data-id="${t.id}">
+        <button class="check-btn" aria-label="${t.completed ? '未完了に戻す' : '完了にする'}">
+          ${t.completed ? CHECK_ICON.done : CHECK_ICON.todo}
+        </button>
         <span class="todo-text">${escHtml(t.text)}</span>
         <span class="todo-category">${CATEGORY_LABEL[t.category] ?? t.category}</span>
         <button class="delete-btn" aria-label="削除">✕</button>
         <div class="delete-overlay">削除</div>
-      </li>`;
-    }).join('');
+      </li>
+    `).join('');
 
     emptyMsg.classList.toggle('hidden', sorted.length > 0);
   },
@@ -129,16 +121,6 @@ export const ui = {
     };
   },
 };
-
-function formatDate(ts) {
-  if (!ts) return '';
-  const d = new Date(ts);
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  const hh = String(d.getHours()).padStart(2, '0');
-  const mi = String(d.getMinutes()).padStart(2, '0');
-  return `${mm}/${dd} ${hh}:${mi}`;
-}
 
 function escHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
