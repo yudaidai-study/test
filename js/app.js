@@ -4,7 +4,7 @@ import { ui }    from './ui.js';
 let currentFilter = 'all';
 
 function refresh() {
-  ui.render(store.getFiltered(currentFilter));
+  ui.render(store.getFiltered(currentFilter), store.getPendingCount());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -25,6 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     onRemove(id) {
       store.remove(id);
+      refresh();
+    },
+    onOrganize() {
+      store.organizeCompleted();
       refresh();
     },
     onEdit(id) {
