@@ -426,15 +426,16 @@ main {
 }
 .edit-textarea:focus { border-color: var(--blue); }
 
-/* 期限チップ行: 1行に収める */
+/* 期限チップ行: 1行に収める・チップを小さく */
 #deadline-group {
   flex-wrap: nowrap;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
 }
-#deadline-group::-webkit-scrollbar { display: none; }
-#deadline-group .chip { flex-shrink: 0; }
+#deadline-group .chip {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  font-size: 13px;
+  min-height: 36px;
+}
 
 /* Date input */
 .date-input {
