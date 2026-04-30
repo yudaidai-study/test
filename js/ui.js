@@ -220,8 +220,10 @@ export const ui = {
     document.querySelector(`[data-priority="${priority}"]`)?.classList.add('active');
 
     // Deadline
+    const calChip = document.querySelector('[data-deadline="date"]');
+    if (calChip) calChip.textContent = 'カレンダー'; // ラベルをリセット
     document.querySelectorAll('#deadline-group .chip').forEach(c => c.classList.remove('active'));
-    dlDateRow.classList.add('hidden');
+    dlDateRow.classList.add('hidden'); // 日付入力欄は常に非表示
     const dlNorm  = DL_COMPAT[deadline] ?? deadline;
     const dlModal = dlNorm === 'days3' ? 'soon' : dlNorm;
     if (!dlModal || dlModal === 'none') {
@@ -229,10 +231,27 @@ export const ui = {
     } else if (['soon', 'week', 'month'].includes(dlModal)) {
       document.querySelector(`[data-deadline="${dlModal}"]`)?.classList.add('active');
     } else {
-      document.querySelector('[data-deadline="date"]')?.classList.add('active');
+      calChip?.classList.add('active');
       dlDateInput.value = deadline;
-      dlDateRow.classList.remove('hidden');
+      // チップに選択済み日付を表示
+      if (deadline && calChip) {
+        const [, m, d] = deadline.split('-');
+        calChip.textContent = `${parseInt(m, 10)}/${parseInt(d, 10)}`;
+      }
     }
+
+    // 日付選択後にチップラベルを更新
+    dlDateInput.onchange = () => {
+      if (!calChip) return;
+      if (dlDateInput.value) {
+        const [, m, d] = dlDateInput.value.split('-');
+        calChip.textContent = `${parseInt(m, 10)}/${parseInt(d, 10)}`;
+        document.querySelectorAll('#deadline-group .chip').forEach(c => c.classList.remove('active'));
+        calChip.classList.add('active');
+      } else {
+        calChip.textContent = 'カレンダー';
+      }
+    };
 
     const close = () => modal.classList.add('hidden');
     document.getElementById('modal-cancel').onclick = close;
@@ -260,9 +279,8 @@ export const ui = {
       if (!chip) return;
       document.querySelectorAll('#deadline-group .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-      const isDate = chip.dataset.deadline === 'date';
-      dlDateRow.classList.toggle('hidden', !isDate);
-      if (isDate) {
+      // カレンダーチップ: 日付入力欄は表示せず直接カレンダーを開く
+      if (chip.dataset.deadline === 'date') {
         try { dlDateInput.showPicker(); } catch (_) {}
       }
     };
