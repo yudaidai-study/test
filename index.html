@@ -85,10 +85,12 @@
           <button class="chip"           data-deadline="soon">すぐ</button>
           <button class="chip"           data-deadline="week">今週</button>
           <button class="chip"           data-deadline="month">今月</button>
-          <button class="chip chip-date" data-deadline="date">カレンダー</button>
+          <!-- input をチップの上に重ねてユーザーが直接タップする形にする -->
+          <span class="chip-date-wrap">
+            <button class="chip chip-date" data-deadline="date">カレンダー</button>
+            <input type="date" id="deadline-date">
+          </span>
         </div>
-        <!-- display:none にすると showPicker() が効かないため opacity:0 で常に DOM に存在させる -->
-        <input type="date" id="deadline-date" class="date-input-hidden">
       </div>
 
       <div class="modal-actions">

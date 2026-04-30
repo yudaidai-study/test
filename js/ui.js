@@ -272,19 +272,20 @@ export const ui = {
       dlSection.classList.toggle('hidden', shop);
     };
 
+    // カレンダー以外のチップ選択: 通常の chip 切り替え + カレンダーラベルリセット
     document.getElementById('deadline-group').onclick = e => {
       const chip = e.target.closest('.chip');
-      if (!chip) return;
+      if (!chip || chip.dataset.deadline === 'date') return; // date は input が直接処理
       document.querySelectorAll('#deadline-group .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-      // カレンダーチップ: 直接カレンダーを開く
-      if (chip.dataset.deadline === 'date') {
-        try {
-          dlDateInput.showPicker();
-        } catch (_) {
-          dlDateInput.focus(); // showPicker() 非対応ブラウザ向けフォールバック
-        }
-      }
+      dlDateInput.value = '';
+      if (calChip) calChip.textContent = 'カレンダー';
+    };
+
+    // カレンダーチップ上の input を直タップ → ネイティブピッカーが開く
+    dlDateInput.onclick = () => {
+      document.querySelectorAll('#deadline-group .chip').forEach(c => c.classList.remove('active'));
+      if (calChip) calChip.classList.add('active');
     };
 
     document.getElementById('modal-ok').onclick = () => {

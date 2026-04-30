@@ -437,15 +437,24 @@ main {
   min-height: 36px;
 }
 
-/* Date input: 画面外に配置して常に DOM にレンダリング済みにする
-   width:0/height:0 や display:none は showPicker() を無効にするため使わない */
-.date-input-hidden {
-  position: fixed;
-  top: -9999px;
-  left: 0;
-  width: 1px;
-  height: 1px;
+/* カレンダーチップ: input をチップに重ねて直接タップさせる */
+.chip-date-wrap {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+.chip-date-wrap input[type="date"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  background: transparent;
 }
 
 /* Date input */
