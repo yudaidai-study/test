@@ -26,10 +26,15 @@
       <button class="tab"        data-filter="work"   role="tab">仕事</button>
       <button class="tab"        data-filter="personal" role="tab">個人</button>
       <button class="tab"        data-filter="urgent" role="tab">緊急</button>
+      <button class="tab"        data-filter="history" role="tab">履歴</button>
     </div>
 
     <main>
       <div id="banner" class="banner hidden" role="alert"></div>
+
+      <div id="history-controls" class="history-controls hidden">
+        <button id="btn-clear-history">履歴をすべて削除</button>
+      </div>
 
       <ul id="todo-list" role="list"></ul>
 

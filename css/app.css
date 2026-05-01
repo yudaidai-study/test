@@ -197,6 +197,46 @@ main {
   transform: translateX(0);
 }
 
+/* ---------- Todo body (text + completion date) ---------- */
+.todo-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.todo-body .todo-text {
+  flex: unset;
+}
+
+.completed-date {
+  font-size: 11px;
+  color: #8e8e93;
+}
+
+/* ---------- History controls ---------- */
+.history-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 16px 8px;
+}
+.history-controls.hidden { display: none; }
+
+#btn-clear-history {
+  font-size: 13px;
+  font-weight: 500;
+  color: #FF3B30;
+  padding: 6px 14px;
+  border: 1.5px solid #FF3B30;
+  border-radius: 8px;
+  min-height: 36px;
+}
+#btn-clear-history:active {
+  background: #FF3B30;
+  color: #fff;
+}
+
 /* ---------- Empty state ---------- */
 .empty-msg {
   text-align: center;

@@ -3,22 +3,39 @@ const CHECK_ICON = { done: '✓', todo: '○' };
 
 let _filter = 'all';
 
+function formatDate(ts) {
+  const d = new Date(ts);
+  return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+}
+
 export const ui = {
-  render(todos) {
+  render(todos, filter = 'all') {
     const list = document.getElementById('todo-list');
     const emptyMsg = document.getElementById('empty-msg');
+    const historyControls = document.getElementById('history-controls');
 
-    // Sort: active first (by createdAt desc), completed last (by completedAt desc)
-    const active = todos.filter(t => !t.completed).sort((a, b) => b.createdAt - a.createdAt);
-    const done   = todos.filter(t =>  t.completed).sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
-    const sorted = [...active, ...done];
+    historyControls.classList.toggle('hidden', filter !== 'history');
+
+    let sorted;
+    if (filter === 'history') {
+      sorted = [...todos].sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+    } else {
+      const active = todos.filter(t => !t.completed).sort((a, b) => b.createdAt - a.createdAt);
+      const done   = todos.filter(t =>  t.completed).sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+      sorted = [...active, ...done];
+    }
 
     list.innerHTML = sorted.map(t => `
       <li class="todo-item priority-${t.priority} ${t.completed ? 'completed' : ''}" data-id="${t.id}">
         <button class="check-btn" aria-label="${t.completed ? '未完了に戻す' : '完了にする'}">
           ${t.completed ? CHECK_ICON.done : CHECK_ICON.todo}
         </button>
-        <span class="todo-text">${escHtml(t.text)}</span>
+        <div class="todo-body">
+          <span class="todo-text">${escHtml(t.text)}</span>
+          ${filter === 'history' && t.completedAt
+            ? `<span class="completed-date">完了: ${formatDate(t.completedAt)}</span>`
+            : ''}
+        </div>
         <span class="todo-category">${CATEGORY_LABEL[t.category] ?? t.category}</span>
         <button class="delete-btn" aria-label="削除">✕</button>
         <div class="delete-overlay">削除</div>
@@ -50,7 +67,7 @@ export const ui = {
     document.getElementById('new-todo').value = '';
   },
 
-  bindEvents({ onAdd, onToggle, onRemove, onFilterChange }) {
+  bindEvents({ onAdd, onToggle, onRemove, onFilterChange, onClearHistory }) {
     // Filter tabs
     document.querySelector('.filter-tabs').addEventListener('click', e => {
       const btn = e.target.closest('.tab');
@@ -64,6 +81,11 @@ export const ui = {
       const id = item.dataset.id;
       if (e.target.closest('.check-btn'))  onToggle(id);
       if (e.target.closest('.delete-btn')) onRemove(id);
+    });
+
+    // Clear history button
+    document.getElementById('btn-clear-history').addEventListener('click', () => {
+      if (confirm('完了済みのタスクをすべて削除しますか？')) onClearHistory();
     });
 
     // Add button & Enter key

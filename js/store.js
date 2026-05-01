@@ -80,7 +80,14 @@ export const store = {
 
   getFiltered(filter) {
     const all = load();
-    if (filter === 'all') return all;
+    if (filter === 'all')     return all;
+    if (filter === 'history') return all.filter(t => t.completed);
     return all.filter(t => t.category === filter);
+  },
+
+  clearCompleted() {
+    const todos = load().filter(t => !t.completed);
+    persist(todos);
+    return todos;
   },
 };

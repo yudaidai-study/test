@@ -4,7 +4,7 @@ import { ui }    from './ui.js';
 let currentFilter = 'all';
 
 function refresh() {
-  ui.render(store.getFiltered(currentFilter));
+  ui.render(store.getFiltered(currentFilter), currentFilter);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,6 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     onFilterChange(filter) {
       currentFilter = filter;
       ui.setFilter(filter);
+      refresh();
+    },
+    onClearHistory() {
+      store.clearCompleted();
       refresh();
     },
   });
