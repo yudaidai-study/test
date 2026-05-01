@@ -93,7 +93,7 @@ export const ui = {
       const regular  = sortTodos(todos.filter(t => t.category !== 'shopping'));
       const shopping = sortTodos(todos.filter(t => t.category === 'shopping'));
 
-      todoHeader.classList.toggle('hidden', regular.length === 0);
+      todoHeader?.classList.toggle('hidden', regular.length === 0);
       list.innerHTML = renderItems(regular);
       if (shopping.length > 0) {
         shoppingSection.classList.remove('hidden');
@@ -103,7 +103,7 @@ export const ui = {
       }
       emptyMsg.classList.toggle('hidden', regular.length > 0 || shopping.length > 0);
     } else {
-      todoHeader.classList.add('hidden');
+      todoHeader?.classList.add('hidden');
       shoppingSection.classList.add('hidden');
       const sorted = sortTodos(todos);
       list.innerHTML = renderItems(sorted);
