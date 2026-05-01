@@ -104,8 +104,8 @@ ul { list-style: none; }
 }
 #btn-organize:active { background: rgba(255,255,255,0.8); }
 #btn-organize:disabled {
-  color: rgba(255,255,255,0.45);
-  background: rgba(255,255,255,0.2);
+  color: rgba(0,122,255,0.35);
+  background: #fff;
 }
 
 /* ---------- Filter tabs ---------- */
