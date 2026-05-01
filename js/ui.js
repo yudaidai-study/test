@@ -82,6 +82,7 @@ function sortTodos(todos) {
 export const ui = {
   render(todos, pendingCount = 0) {
     const list            = document.getElementById('todo-list');
+    const todoHeader      = document.getElementById('todo-section-header');
     const shoppingSection = document.getElementById('shopping-section');
     const shoppingList    = document.getElementById('shopping-list');
     const emptyMsg        = document.getElementById('empty-msg');
@@ -92,6 +93,7 @@ export const ui = {
       const regular  = sortTodos(todos.filter(t => t.category !== 'shopping'));
       const shopping = sortTodos(todos.filter(t => t.category === 'shopping'));
 
+      todoHeader.classList.toggle('hidden', regular.length === 0);
       list.innerHTML = renderItems(regular);
       if (shopping.length > 0) {
         shoppingSection.classList.remove('hidden');
@@ -101,6 +103,7 @@ export const ui = {
       }
       emptyMsg.classList.toggle('hidden', regular.length > 0 || shopping.length > 0);
     } else {
+      todoHeader.classList.add('hidden');
       shoppingSection.classList.add('hidden');
       const sorted = sortTodos(todos);
       list.innerHTML = renderItems(sorted);
@@ -209,10 +212,10 @@ export const ui = {
     document.querySelectorAll('#category-group .chip').forEach(c => c.classList.remove('active'));
     document.querySelector(`[data-category="${category}"]`)?.classList.add('active');
 
-    // Show/hide priority+deadline based on category
+    // 買い物選択時は重要度・期限を非活性表示（非表示にはしない）
     const isShop = category === 'shopping';
-    priSection.classList.toggle('hidden', isShop);
-    dlSection.classList.toggle('hidden', isShop);
+    priSection.classList.toggle('section-disabled', isShop);
+    dlSection.classList.toggle('section-disabled', isShop);
 
     // Priority
     document.querySelectorAll('#priority-group .chip').forEach(c => c.classList.remove('active'));
@@ -268,8 +271,8 @@ export const ui = {
       document.querySelectorAll('#category-group .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       const shop = chip.dataset.category === 'shopping';
-      priSection.classList.toggle('hidden', shop);
-      dlSection.classList.toggle('hidden', shop);
+      priSection.classList.toggle('section-disabled', shop);
+      dlSection.classList.toggle('section-disabled', shop);
     };
 
     // カレンダー以外のチップ選択: 通常の chip 切り替え + カレンダーラベルリセット

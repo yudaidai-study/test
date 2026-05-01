@@ -270,6 +270,12 @@ main {
 }
 .todo-item.reveal-delete .delete-overlay { transform: translateX(0); }
 
+/* 重要度・期限セクション: 買い物選択時は非活性表示 */
+.section-disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
 /* ---------- Shopping section (すべてタブ内の買い物エリア) ---------- */
 .shopping-section { margin-top: 8px; }
 
