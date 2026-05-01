@@ -173,6 +173,7 @@ export const ui = {
       }
       if (_revealedItem) { dismissReveal(); return; }
       if (e.target.closest('.check-btn')) { onToggle(id); return; }
+      if (_filter === 'completed') return;
       onEdit(id);
     }
     document.getElementById('todo-list').addEventListener('click', handleListClick);
