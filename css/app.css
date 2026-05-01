@@ -180,8 +180,11 @@ main {
 }
 
 .todo-item.priority-high   { border-left-color: var(--red); }
-.todo-item.priority-medium { border-left-color: var(--orange); }
-.todo-item.priority-low    { border-left-color: var(--green); }
+.todo-item.priority-medium { border-left-color: var(--surface-3); }
+.todo-item.priority-low    { border-left: none; padding-left: 18px; }
+
+/* 買い物タスクは左ボーダーなし */
+.todo-item.category-shopping { border-left: none; padding-left: 18px; }
 
 /* Tasks due within 3 days: deadline text only — no background tint on the whole item */
 .todo-item.due-soon .todo-deadline {

@@ -62,7 +62,7 @@ function renderItems(todos, showCompletedDate = false) {
       ? `<span class="completed-date">完了: ${formatDate(t.completedAt)}</span>`
       : deadlineHtml(t.deadline);
     return `
-      <li class="todo-item priority-${t.priority}${stateClass}${dueSoon ? ' due-soon' : ''}" data-id="${t.id}">
+      <li class="todo-item priority-${t.priority} category-${t.category}${stateClass}${dueSoon ? ' due-soon' : ''}" data-id="${t.id}">
         <button class="check-btn" aria-label="${isDone ? '未完了に戻す' : '完了にする'}">
           ${isDone ? '✓' : '○'}
         </button>
