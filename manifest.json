@@ -1,15 +1,20 @@
 {
-  "name": "Todo",
-  "short_name": "Todo",
-  "description": "シンプルなTodo管理アプリ",
+  "name": "Tick",
+  "short_name": "Tick",
+  "description": "シンプルなタスク管理アプリ",
   "start_url": "/test/",
   "scope": "/test/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f2f2f7",
+  "background_color": "#007AFF",
   "theme_color": "#007AFF",
   "lang": "ja",
   "icons": [
+    {
+      "src": "/test/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
     {
       "src": "/test/icons/icon-192.png",
       "sizes": "192x192",

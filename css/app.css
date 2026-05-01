@@ -55,31 +55,58 @@ ul { list-style: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--surface-1);
-  border-bottom: 1px solid var(--sep);
-  padding: 14px 20px 12px;
+  background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+  border-bottom: none;
+  padding: 14px 20px 16px;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .app-header h1 {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
-  color: var(--blue);
-  letter-spacing: -0.5px;
+  color: #fff;
+  letter-spacing: 0.2px;
+}
+
+.header-date {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.72);
+  letter-spacing: 0.1px;
 }
 
 #btn-organize {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--blue);
-  min-height: 36px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.92);
+  min-height: 34px;
   padding: 0 14px;
-  border-radius: 8px;
-  border: 1.5px solid var(--blue);
+  border-radius: 20px;
+  border: 1.5px solid rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.15);
 }
-#btn-organize:active { background: rgba(0,122,255,0.08); }
+#btn-organize:active { background: rgba(255,255,255,0.28); }
 #btn-organize:disabled {
-  color: var(--text-2);
-  border-color: var(--sep);
+  color: rgba(255,255,255,0.3);
+  border-color: rgba(255,255,255,0.2);
+  background: transparent;
 }
 
 /* ---------- Filter tabs ---------- */
