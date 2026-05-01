@@ -1,6 +1,6 @@
 {
-  "name": "Tick",
-  "short_name": "Tick",
+  "name": "Todo",
+  "short_name": "Todo",
   "description": "シンプルなタスク管理アプリ",
   "start_url": "/test/",
   "scope": "/test/",
