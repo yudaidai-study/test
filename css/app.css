@@ -306,6 +306,30 @@ main {
   padding: 0 16px;
 }
 
+/* ---------- Completion date (履歴タブ) ---------- */
+.completed-date { font-size: 11px; font-weight: 500; color: var(--text-2); }
+
+/* ---------- History controls ---------- */
+.history-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 16px 8px;
+}
+
+#btn-clear-history {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--red);
+  padding: 6px 14px;
+  border: 1.5px solid var(--red);
+  border-radius: 8px;
+  min-height: 36px;
+}
+#btn-clear-history:active {
+  background: var(--red);
+  color: #fff;
+}
+
 /* ---------- Empty state ---------- */
 .empty-msg {
   text-align: center;

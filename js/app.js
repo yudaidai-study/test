@@ -44,5 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
       ui.setFilter(filter);
       refresh();
     },
+    onClearHistory() {
+      store.clearCompleted();
+      refresh();
+    },
   });
 });

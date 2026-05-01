@@ -48,11 +48,19 @@ function escHtml(str) {
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-function renderItems(todos) {
+function formatDate(ts) {
+  const d = new Date(ts);
+  return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function renderItems(todos, showCompletedDate = false) {
   return todos.map(t => {
     const isDone     = t.completed || t.pendingComplete;
     const stateClass = t.completed ? ' completed' : (t.pendingComplete ? ' pending-complete' : '');
     const dueSoon    = isDueSoon(t.deadline) && !t.completed && !t.pendingComplete;
+    const metaSecondary = showCompletedDate && t.completedAt
+      ? `<span class="completed-date">完了: ${formatDate(t.completedAt)}</span>`
+      : deadlineHtml(t.deadline);
     return `
       <li class="todo-item priority-${t.priority}${stateClass}${dueSoon ? ' due-soon' : ''}" data-id="${t.id}">
         <button class="check-btn" aria-label="${isDone ? '未完了に戻す' : '完了にする'}">
@@ -61,7 +69,7 @@ function renderItems(todos) {
         <span class="todo-text">${escHtml(t.text)}</span>
         <div class="todo-meta">
           <span class="todo-category">${escHtml(CATEGORY_LABEL[t.category] ?? t.category)}</span>
-          ${deadlineHtml(t.deadline)}
+          ${metaSecondary}
         </div>
         <div class="delete-overlay">削除</div>
       </li>
@@ -87,6 +95,9 @@ export const ui = {
     const shoppingList    = document.getElementById('shopping-list');
     const emptyMsg        = document.getElementById('empty-msg');
     const organizeBtn     = document.getElementById('btn-organize');
+    const historyControls = document.getElementById('history-controls');
+
+    historyControls?.classList.toggle('hidden', _filter !== 'completed');
 
     if (_filter === 'all') {
       // すべてタブ: 通常タスクと買い物タスクを別エリアに表示
@@ -106,7 +117,7 @@ export const ui = {
       todoHeader?.classList.add('hidden');
       shoppingSection.classList.add('hidden');
       const sorted = sortTodos(todos);
-      list.innerHTML = renderItems(sorted);
+      list.innerHTML = renderItems(sorted, _filter === 'completed');
       emptyMsg.classList.toggle('hidden', sorted.length > 0);
     }
 
@@ -139,13 +150,17 @@ export const ui = {
     document.getElementById('new-todo').value = '';
   },
 
-  bindEvents({ onAdd, onToggle, onRemove, onOrganize, onEdit, onFilterChange }) {
+  bindEvents({ onAdd, onToggle, onRemove, onOrganize, onEdit, onFilterChange, onClearHistory }) {
     document.querySelector('.filter-tabs').addEventListener('click', e => {
       const btn = e.target.closest('.tab');
       if (btn) onFilterChange(btn.dataset.filter);
     });
 
     document.getElementById('btn-organize').addEventListener('click', onOrganize);
+
+    document.getElementById('btn-clear-history').addEventListener('click', () => {
+      if (confirm('完了済みのタスクをすべて削除しますか？')) onClearHistory();
+    });
 
     function handleListClick(e) {
       const item = e.target.closest('.todo-item');
