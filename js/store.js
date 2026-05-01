@@ -107,4 +107,10 @@ export const store = {
   getPendingCount() {
     return load().filter(t => t.pendingComplete && !t.completed).length;
   },
+
+  clearCompleted() {
+    const todos = load().filter(t => !t.completed);
+    persist(todos);
+    return todos;
+  },
 };
