@@ -94,19 +94,18 @@ ul { list-style: none; }
 
 #btn-organize {
   font-size: 14px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.92);
+  font-weight: 700;
+  color: #007AFF;
   min-height: 34px;
-  padding: 0 14px;
+  padding: 0 16px;
   border-radius: 20px;
-  border: 1.5px solid rgba(255,255,255,0.45);
-  background: rgba(255,255,255,0.15);
+  border: none;
+  background: #fff;
 }
-#btn-organize:active { background: rgba(255,255,255,0.28); }
+#btn-organize:active { background: rgba(255,255,255,0.8); }
 #btn-organize:disabled {
-  color: rgba(255,255,255,0.3);
-  border-color: rgba(255,255,255,0.2);
-  background: transparent;
+  color: rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.2);
 }
 
 /* ---------- Filter tabs ---------- */
