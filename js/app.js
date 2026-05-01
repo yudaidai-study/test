@@ -7,11 +7,20 @@ function refresh() {
   ui.render(store.getFiltered(currentFilter), store.getPendingCount());
 }
 
+function updateHeaderDate() {
+  const el = document.getElementById('header-date');
+  if (!el) return;
+  const d    = new Date();
+  const days = ['日', '月', '火', '水', '木', '金', '土'];
+  el.textContent = `${d.getMonth() + 1}月${d.getDate()}日（${days[d.getDay()]}）`;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   if (!store.isStorageAvailable()) {
     ui.showBanner('プライベートモードのためデータは保存されません');
   }
 
+  updateHeaderDate();
   refresh();
 
   ui.bindEvents({

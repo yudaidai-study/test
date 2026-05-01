@@ -5,17 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Todo">
+  <meta name="apple-mobile-web-app-title" content="Tick">
   <meta name="theme-color" content="#007AFF">
   <link rel="apple-touch-icon" href="/test/icons/apple-touch-icon.png">
   <link rel="manifest" href="/test/manifest.json">
-  <title>Todo</title>
+  <title>Tick</title>
   <link rel="stylesheet" href="/test/css/app.css">
 </head>
 <body>
   <div id="app">
     <header class="app-header">
-      <h1>Todo</h1>
+      <div class="app-brand">
+        <svg class="brand-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="36" height="36" rx="9" fill="rgba(255,255,255,0.18)"/>
+          <path d="M9 18 L15.5 24.5 L27 12" stroke="white" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="brand-text">
+          <h1>Tick</h1>
+          <p class="header-date" id="header-date"></p>
+        </div>
+      </div>
       <button id="btn-organize" aria-label="整理">整理</button>
     </header>
 
