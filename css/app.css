@@ -5,11 +5,27 @@
   padding: 0;
 }
 
+:root {
+  --bg:        #f2f2f7;
+  --surface-1: #ffffff;
+  --surface-2: #f2f2f7;
+  --surface-3: #e5e5ea;
+  --text-1:    #1c1c1e;
+  --text-2:    #8e8e93;
+  --sep:       #d1d1d6;
+  --blue:      #007AFF;
+  --red:       #FF3B30;
+  --orange:    #FF9500;
+  --amber:     #FFBF00;
+  --green:     #34C759;
+  --purple:    #AF52DE;
+}
+
 html, body {
   height: 100%;
-  background: #f2f2f7;
+  background: var(--bg);
   font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', sans-serif;
-  color: #1c1c1e;
+  color: var(--text-1);
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
 }
@@ -19,58 +35,158 @@ button {
   border: none;
   background: none;
   font-family: inherit;
+  color: inherit;
 }
 
 ul { list-style: none; }
+
+.hidden { display: none !important; }
 
 /* ---------- App shell ---------- */
 #app {
   display: flex;
   flex-direction: column;
-  height: 100dvh;          /* dynamic viewport height (iPhone notch safe) */
+  height: 100dvh;
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* ---------- Header ---------- */
 .app-header {
-  background: #fff;
-  border-bottom: 1px solid #d1d1d6;
-  padding: 14px 20px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+  border-bottom: none;
+  padding: 14px 20px 16px;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .app-header h1 {
-  font-size: 28px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.2px;
+}
+
+.header-date {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.72);
+  letter-spacing: 0.1px;
+}
+
+#btn-organize {
+  font-size: 14px;
   font-weight: 700;
   color: #007AFF;
-  letter-spacing: -0.5px;
+  min-height: 34px;
+  padding: 0 16px;
+  border-radius: 20px;
+  border: none;
+  background: #fff;
+}
+#btn-organize:active { background: rgba(255,255,255,0.8); }
+#btn-organize:disabled {
+  color: rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.2);
 }
 
 /* ---------- Filter tabs ---------- */
 .filter-tabs {
   display: flex;
-  background: #fff;
-  padding: 0 12px 0;
-  border-bottom: 1px solid #d1d1d6;
+  align-items: center;
+  background: var(--surface-1);
+  padding: 0 12px;
+  border-bottom: 1px solid var(--sep);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
 .filter-tabs::-webkit-scrollbar { display: none; }
 
+/* すべてタブと他タブの間の区切り線 */
+.tab-separator {
+  flex-shrink: 0;
+  width: 1px;
+  height: 16px;
+  background: var(--sep);
+  margin: 0 4px;
+}
+
 .tab {
   flex-shrink: 0;
   padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #8e8e93;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-2);
   border-bottom: 2px solid transparent;
   min-height: 44px;
 }
 .tab.active {
-  color: #007AFF;
-  border-bottom-color: #007AFF;
+  color: var(--blue);
+  border-bottom-color: var(--blue);
 }
+.tab[data-filter="done"].active {
+  color: #aeaeb2;
+  border-bottom-color: #c7c7cc;
+}
+.tab[data-filter="done"] {
+  color: #c7c7cc;
+}
+
+/* 買い物タブ: purple accent */
+.tab.tab-shop.active {
+  color: var(--purple);
+  border-bottom-color: var(--purple);
+}
+
+/* 完了タブ: same style, pushed to right */
+.tab.tab-done {
+  margin-left: auto;
+}
+
+/* ---------- Priority filter row ---------- */
+.priority-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--sep);
+}
+
+.pf-chip {
+  padding: 4px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--sep);
+  color: var(--text-2);
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  background: var(--surface-2);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.pf-chip.active         { background: var(--blue); color: #fff; border-color: var(--blue); }
 
 /* ---------- Main scroll area ---------- */
 main {
@@ -78,9 +194,10 @@ main {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: 12px 0 8px;
+  background: var(--bg);
 }
 
-/* ---------- Banner (storage warning) ---------- */
+/* ---------- Banner ---------- */
 .banner {
   margin: 0 16px 10px;
   padding: 10px 14px;
@@ -89,7 +206,6 @@ main {
   font-size: 13px;
   color: #856404;
 }
-.banner.hidden { display: none; }
 
 /* ---------- Todo list ---------- */
 #todo-list {
@@ -103,23 +219,46 @@ main {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #fff;
+  background: var(--surface-1);
   border-radius: 12px;
   padding: 12px 14px;
+  border-left: 4px solid var(--surface-3);
   box-shadow: 0 1px 3px rgba(0,0,0,0.07);
-  border-left: 4px solid #c7c7cc;
   transition: opacity 0.15s;
   position: relative;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.todo-item.priority-high   { border-left-color: #FF3B30; }
-.todo-item.priority-medium { border-left-color: #FF9500; }
-.todo-item.priority-low    { border-left-color: #34C759; }
+.todo-item.priority-high   { border-left-color: var(--red); }
+.todo-item.priority-medium { border-left-color: var(--amber); }
+.todo-item.priority-low    { border-left-color: var(--green); }
 
-.todo-item.completed {
-  opacity: 0.55;
+/* 買い物タスクは左ボーダーなし */
+.todo-item.category-shopping { border-left: none; padding-left: 18px; }
+
+/* Tasks due within 3 days: deadline text only — no background tint on the whole item */
+.todo-item.due-soon .todo-deadline {
+  font-size: 12px;
+  font-weight: 600;
 }
+
+/* Pending complete */
+.todo-item.pending-complete { opacity: 0.55; }
+.todo-item.pending-complete .todo-text {
+  text-decoration: line-through;
+  color: var(--text-2);
+}
+.todo-item.pending-complete .check-btn { color: var(--green); }
+
+/* Fully completed (完了 tab) */
+.todo-item.completed { opacity: 0.45; }
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  color: var(--text-2);
+}
+.todo-item.completed .check-btn { color: var(--green); }
 
 /* Check button */
 .check-btn {
@@ -136,108 +275,157 @@ main {
   color: #c7c7cc;
   border-radius: 50%;
 }
-.todo-item.completed .check-btn {
-  color: #34C759;
-}
 
-/* Todo text */
+/* Task text */
 .todo-text {
   flex: 1;
   font-size: 16px;
   line-height: 1.4;
   word-break: break-word;
 }
-.todo-item.completed .todo-text {
-  text-decoration: line-through;
-  color: #8e8e93;
+
+/* Right-side meta: category above, deadline below */
+.todo-meta {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
 }
 
 /* Category badge */
 .todo-category {
-  flex-shrink: 0;
   font-size: 11px;
-  color: #8e8e93;
-  background: #f2f2f7;
+  color: var(--text-2);
+  background: var(--surface-2);
   border-radius: 6px;
   padding: 2px 7px;
 }
 
-/* Delete button */
-.delete-btn {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #c7c7cc;
-  font-size: 18px;
-  margin: -9px -9px -9px 0;
-  border-radius: 8px;
-}
-.delete-btn:active { color: #FF3B30; }
+/* Deadline badges: no color by default, red only when due within 3 days */
+.todo-deadline { font-size: 11px; font-weight: 500; color: var(--text-2); }
+.todo-item.due-soon .todo-deadline { color: var(--red); }
 
-/* Swipe-to-delete overlay */
+/* Swipe overlay */
 .delete-overlay {
   position: absolute;
   right: 0; top: 0; bottom: 0;
-  width: 80px;
-  background: #FF3B30;
+  width: 88px;
+  background: var(--red);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   transform: translateX(100%);
   transition: transform 0.2s;
   border-radius: 0 12px 12px 0;
+  cursor: pointer;
 }
-.todo-item.reveal-delete .delete-overlay {
-  transform: translateX(0);
+.todo-item.reveal-delete .delete-overlay { transform: translateX(0); }
+
+/* 重要度・期限セクション: 買い物選択時は非活性表示 */
+.section-disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* ---------- Shopping section (すべてタブ内の買い物エリア) ---------- */
+.shopping-section { margin-top: 8px; }
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 16px 8px;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--sep);
+}
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: 0.3px;
+}
+
+#shopping-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 16px;
+}
+
+/* ---------- Completion date (履歴タブ) ---------- */
+.completed-date { font-size: 11px; font-weight: 500; color: var(--text-2); }
+
+/* ---------- History controls ---------- */
+.history-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 16px 8px;
+}
+
+#btn-clear-history {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--red);
+  padding: 6px 14px;
+  border: 1.5px solid var(--red);
+  border-radius: 8px;
+  min-height: 36px;
+}
+#btn-clear-history:active {
+  background: var(--red);
+  color: #fff;
 }
 
 /* ---------- Empty state ---------- */
 .empty-msg {
   text-align: center;
-  color: #8e8e93;
+  color: var(--text-2);
   font-size: 15px;
   padding: 48px 24px;
 }
-.empty-msg.hidden { display: none; }
 
-/* ---------- Add bar (footer) ---------- */
+/* ---------- Add bar ---------- */
 .add-bar {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #fff;
-  border-top: 1px solid #d1d1d6;
+  background: var(--surface-1);
+  border-top: 1px solid var(--sep);
   padding: 10px 16px;
   padding-bottom: max(10px, env(safe-area-inset-bottom));
 }
 
 .add-bar input {
   flex: 1;
-  font-size: 16px;   /* MUST be ≥16px — prevents Safari auto-zoom on focus */
-  border: 1px solid #c7c7cc;
+  font-size: 16px;
+  border: 1px solid var(--sep);
   border-radius: 10px;
   padding: 10px 14px;
   outline: none;
-  background: #f2f2f7;
-  color: #1c1c1e;
+  background: var(--surface-2);
+  color: var(--text-1);
   -webkit-appearance: none;
 }
+.add-bar input::placeholder { color: var(--text-2); }
 .add-bar input:focus {
-  border-color: #007AFF;
-  background: #fff;
+  border-color: var(--blue);
+  background: var(--surface-1);
 }
 
 #btn-add {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #007AFF;
+  background: var(--blue);
   color: #fff;
   font-size: 26px;
   line-height: 1;
@@ -259,10 +447,9 @@ main {
   z-index: 100;
   padding-bottom: env(safe-area-inset-bottom);
 }
-.modal.hidden { display: none; }
 
 .modal-card {
-  background: #fff;
+  background: var(--surface-1);
   border-radius: 20px 20px 0 0;
   padding: 24px 20px 20px;
   width: 100%;
@@ -271,7 +458,7 @@ main {
 .modal-title {
   font-size: 12px;
   font-weight: 600;
-  color: #8e8e93;
+  color: var(--text-2);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 10px;
@@ -289,21 +476,91 @@ main {
   border-radius: 20px;
   font-size: 15px;
   font-weight: 500;
-  border: 1.5px solid #c7c7cc;
-  color: #3a3a3c;
+  border: 1.5px solid var(--sep);
+  color: var(--text-2);
   min-height: 44px;
   display: flex;
   align-items: center;
 }
-.chip.active {
-  background: #007AFF;
-  border-color: #007AFF;
-  color: #fff;
-}
-.chip-high.active   { background: #FF3B30; border-color: #FF3B30; }
-.chip-medium.active { background: #FF9500; border-color: #FF9500; }
-.chip-low.active    { background: #34C759; border-color: #34C759; }
+.chip.active        { background: var(--blue);   border-color: var(--blue);   color: #fff; }
+.chip-high.active   { background: var(--blue); border-color: var(--blue); }
+.chip-medium.active { background: var(--blue); border-color: var(--blue); }
+.chip-low.active    { background: var(--blue); border-color: var(--blue); }
 
+/* 買い物カテゴリチップ */
+.chip-shop.active   { background: var(--purple); border-color: var(--purple); }
+
+/* 日付指定(指定)チップ: purple border to distinguish */
+.chip-date { border-color: var(--purple); color: var(--purple); }
+.chip-date.active { background: var(--purple); border-color: var(--purple); color: #fff; }
+
+/* Edit textarea */
+.edit-textarea {
+  display: block;
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--sep);
+  border-radius: 10px;
+  color: var(--text-1);
+  font-size: 16px;
+  font-family: inherit;
+  padding: 10px 14px;
+  resize: none;
+  outline: none;
+  margin-bottom: 18px;
+}
+.edit-textarea:focus { border-color: var(--blue); }
+
+/* 期限チップ行: 1行に収める・チップを小さく */
+#deadline-group {
+  flex-wrap: nowrap;
+}
+#deadline-group .chip {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  font-size: 13px;
+  min-height: 36px;
+}
+
+/* カレンダーチップ: input をチップに重ねて直接タップさせる */
+.chip-date-wrap {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+.chip-date-wrap input[type="date"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  background: transparent;
+}
+
+/* Date input */
+.date-input {
+  display: block;
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--sep);
+  border-radius: 10px;
+  color: var(--text-1);
+  font-size: 16px;
+  font-family: inherit;
+  padding: 10px 14px;
+  outline: none;
+  margin-bottom: 18px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.date-input:focus { border-color: var(--blue); }
+
+/* Modal actions */
 .modal-actions {
   display: flex;
   gap: 10px;
@@ -315,12 +572,13 @@ main {
   border-radius: 12px;
   font-size: 17px;
   font-weight: 500;
-  border: 1.5px solid #c7c7cc;
-  color: #3a3a3c;
+  border: 1.5px solid var(--sep);
+  color: var(--text-1);
+  background: var(--surface-1);
 }
 .btn-primary {
-  background: #007AFF !important;
-  border-color: #007AFF !important;
+  background: var(--blue) !important;
+  border-color: var(--blue) !important;
   color: #fff !important;
   font-weight: 600 !important;
 }

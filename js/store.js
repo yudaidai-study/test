@@ -1,6 +1,6 @@
-const STORAGE_KEY = 'todo-app-v1';
+const STORAGE_KEY = 'todo-app-v2';
 
-let _mem = null; // fallback when localStorage is unavailable
+let _mem = null;
 
 function isAvailable() {
   try {
@@ -24,14 +24,11 @@ function load() {
 }
 
 function persist(todos) {
-  if (!available) {
-    _mem = todos;
-    return;
-  }
+  if (!available) { _mem = todos; return; }
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
   } catch {
-    _mem = todos; // storage full — keep in memory
+    _mem = todos;
   }
 }
 
@@ -46,14 +43,16 @@ export const store = {
 
   getAll() { return load(); },
 
-  add({ text, priority = 'medium', category = 'other' }) {
+  add({ text, priority = 'medium', category = 'personal', deadline = null }) {
     const todos = load();
     const todo = {
       id: makeId(),
       text,
       completed: false,
+      pendingComplete: false,
       priority,
       category,
+      deadline,
       createdAt: Date.now(),
       completedAt: null,
     };
@@ -62,10 +61,29 @@ export const store = {
     return todo;
   },
 
+  update(id, changes) {
+    const todos = load().map(t => t.id === id ? { ...t, ...changes } : t);
+    persist(todos);
+    return todos;
+  },
+
   toggle(id) {
+    const todos = load().map(t => {
+      if (t.id !== id) return t;
+      if (t.completed) {
+        return { ...t, completed: false, pendingComplete: false, completedAt: null };
+      }
+      return { ...t, pendingComplete: !t.pendingComplete };
+    });
+    persist(todos);
+    return todos;
+  },
+
+  organizeCompleted() {
+    const now = Date.now();
     const todos = load().map(t =>
-      t.id === id
-        ? { ...t, completed: !t.completed, completedAt: !t.completed ? Date.now() : null }
+      t.pendingComplete
+        ? { ...t, completed: true, pendingComplete: false, completedAt: now }
         : t
     );
     persist(todos);
@@ -80,7 +98,19 @@ export const store = {
 
   getFiltered(filter) {
     const all = load();
-    if (filter === 'all') return all;
-    return all.filter(t => t.category === filter);
+    if (filter === 'all')       return all.filter(t => !t.completed);
+    if (filter === 'completed') return all.filter(t =>  t.completed);
+    if (filter === 'shopping')  return all.filter(t => !t.completed && t.category === 'shopping');
+    return all.filter(t => !t.completed && t.category === filter);
+  },
+
+  getPendingCount() {
+    return load().filter(t => t.pendingComplete && !t.completed).length;
+  },
+
+  clearCompleted() {
+    const todos = load().filter(t => !t.completed);
+    persist(todos);
+    return todos;
   },
 };
