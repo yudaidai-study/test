@@ -186,10 +186,7 @@ ul { list-style: none; }
   background: var(--surface-2);
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
-.pf-chip.active         { color: #fff; border-color: transparent; }
-.pf-high.active         { background: var(--red); }
-.pf-medium.active       { background: var(--amber); }
-.pf-low.active          { background: var(--text-2); }
+.pf-chip.active         { background: var(--blue); color: #fff; border-color: var(--blue); }
 
 /* ---------- Main scroll area ---------- */
 main {

@@ -134,6 +134,8 @@ export const ui = {
       btn.classList.toggle('active', active);
       btn.setAttribute('aria-selected', active ? 'true' : 'false');
     });
+    const pfRow = document.querySelector('.priority-filters');
+    if (pfRow) pfRow.classList.toggle('hidden', filter === 'shopping');
   },
 
   showBanner(msg) {

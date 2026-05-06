@@ -5,8 +5,15 @@ let currentFilter     = 'personal';
 let currentPriorities = ['high', 'medium'];
 
 function refresh() {
-  const all      = store.getFiltered(currentFilter);
-  const filtered = all.filter(t => currentPriorities.includes(t.priority));
+  const all = store.getFiltered(currentFilter);
+  let filtered;
+  if (currentFilter === 'shopping') {
+    filtered = all;
+  } else if (currentFilter === 'all') {
+    filtered = all.filter(t => t.category === 'shopping' || currentPriorities.includes(t.priority));
+  } else {
+    filtered = all.filter(t => currentPriorities.includes(t.priority));
+  }
   ui.render(filtered, store.getPendingCount());
 }
 
