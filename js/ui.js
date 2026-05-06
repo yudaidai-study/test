@@ -245,7 +245,7 @@ export const ui = {
 
     // Priority
     document.querySelectorAll('#priority-group .chip').forEach(c => c.classList.remove('active'));
-    document.querySelector(`[data-priority="${priority}"]`)?.classList.add('active');
+    document.querySelector(`#priority-group [data-priority="${priority}"]`)?.classList.add('active');
 
     // Deadline
     const calChip = document.querySelector('[data-deadline="date"]');
