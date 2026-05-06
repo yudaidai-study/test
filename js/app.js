@@ -1,10 +1,13 @@
 import { store } from './store.js';
 import { ui }    from './ui.js';
 
-let currentFilter = 'all';
+let currentFilter     = 'personal';
+let currentPriorities = ['high', 'medium'];
 
 function refresh() {
-  ui.render(store.getFiltered(currentFilter), store.getPendingCount());
+  const all      = store.getFiltered(currentFilter);
+  const filtered = all.filter(t => currentPriorities.includes(t.priority));
+  ui.render(filtered, store.getPendingCount());
 }
 
 function updateHeaderDate() {
@@ -21,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   updateHeaderDate();
+  ui.setFilter(currentFilter);
   refresh();
 
   ui.bindEvents({
@@ -55,6 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     onClearHistory() {
       store.clearCompleted();
+      refresh();
+    },
+    onPriorityFilterChange(priorities) {
+      currentPriorities = priorities;
       refresh();
     },
   });
