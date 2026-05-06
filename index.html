@@ -22,10 +22,18 @@
     </header>
 
     <div class="filter-tabs" role="tablist">
-      <button class="tab active" data-filter="all"    role="tab" aria-selected="true">すべて</button>
-      <button class="tab"        data-filter="work"   role="tab">仕事</button>
-      <button class="tab"        data-filter="personal" role="tab">個人</button>
-      <button class="tab"        data-filter="urgent" role="tab">緊急</button>
+      <button class="tab"        data-filter="all"      role="tab" aria-selected="false">すべて</button>
+      <button class="tab"        data-filter="work"     role="tab" aria-selected="false">仕事</button>
+      <button class="tab active" data-filter="personal" role="tab" aria-selected="true">個人</button>
+      <button class="tab"        data-filter="shopping" role="tab" aria-selected="false">買い物</button>
+      <button class="tab"        data-filter="urgent"   role="tab" aria-selected="false">緊急</button>
+      <button class="tab"        data-filter="history"  role="tab" aria-selected="false">履歴</button>
+    </div>
+
+    <div class="priority-filters" role="group" aria-label="重要度フィルター">
+      <button class="pf-chip pf-high   active" data-priority="high">高</button>
+      <button class="pf-chip pf-medium active" data-priority="medium">中</button>
+      <button class="pf-chip pf-low"           data-priority="low">低</button>
     </div>
 
     <main>
@@ -60,10 +68,15 @@
       </div>
       <p class="modal-title">カテゴリ</p>
       <div class="modal-row" id="category-group">
-        <button class="chip active" data-category="work">仕事</button>
-        <button class="chip"        data-category="personal">個人</button>
-        <button class="chip"        data-category="urgent">緊急</button>
-        <button class="chip"        data-category="other">その他</button>
+        <button class="chip" data-category="work">仕事</button>
+        <button class="chip active" data-category="personal">個人</button>
+        <button class="chip" data-category="shopping">買い物</button>
+        <button class="chip" data-category="urgent">緊急</button>
+        <button class="chip" data-category="other">その他</button>
+      </div>
+      <p class="modal-title">期限（任意）</p>
+      <div class="modal-row">
+        <input type="date" id="due-date-input" class="due-date-input">
       </div>
       <div class="modal-actions">
         <button id="modal-cancel">キャンセル</button>

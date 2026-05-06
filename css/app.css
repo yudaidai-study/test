@@ -72,6 +72,36 @@ ul { list-style: none; }
   border-bottom-color: #007AFF;
 }
 
+/* ---------- Priority filter chips ---------- */
+.priority-filters {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f2f2f7;
+  border-bottom: 1px solid #d1d1d6;
+}
+
+.pf-chip {
+  padding: 4px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1.5px solid #c7c7cc;
+  color: #8e8e93;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.pf-chip.active {
+  color: #fff;
+  border-color: transparent;
+}
+.pf-high.active   { background: #FF3B30; }
+.pf-medium.active { background: #FFBF00; }
+.pf-low.active    { background: #8e8e93; }
+
 /* ---------- Main scroll area ---------- */
 main {
   flex: 1;
@@ -114,8 +144,8 @@ main {
 }
 
 .todo-item.priority-high   { border-left-color: #FF3B30; }
-.todo-item.priority-medium { border-left-color: #FF9500; }
-.todo-item.priority-low    { border-left-color: #34C759; }
+.todo-item.priority-medium { border-left-color: #FFBF00; }
+.todo-item.priority-low    { border-left-color: #8e8e93; }
 
 .todo-item.completed {
   opacity: 0.55;
@@ -140,9 +170,17 @@ main {
   color: #34C759;
 }
 
+/* Todo body (text + due date) */
+.todo-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
 /* Todo text */
 .todo-text {
-  flex: 1;
   font-size: 16px;
   line-height: 1.4;
   word-break: break-word;
@@ -151,6 +189,14 @@ main {
   text-decoration: line-through;
   color: #8e8e93;
 }
+
+/* Due date badge */
+.todo-due {
+  font-size: 11px;
+  color: #8e8e93;
+}
+.todo-item.priority-high   .todo-due { color: #FF3B30; }
+.todo-item.priority-medium .todo-due { color: #FFBF00; }
 
 /* Category badge */
 .todo-category {
@@ -301,8 +347,24 @@ main {
   color: #fff;
 }
 .chip-high.active   { background: #FF3B30; border-color: #FF3B30; }
-.chip-medium.active { background: #FF9500; border-color: #FF9500; }
-.chip-low.active    { background: #34C759; border-color: #34C759; }
+.chip-medium.active { background: #FFBF00; border-color: #FFBF00; }
+.chip-low.active    { background: #8e8e93; border-color: #8e8e93; }
+
+/* Due date input */
+.due-date-input {
+  flex: 1;
+  font-size: 15px;
+  font-family: inherit;
+  border: 1.5px solid #c7c7cc;
+  border-radius: 10px;
+  padding: 10px 14px;
+  outline: none;
+  background: #f2f2f7;
+  color: #1c1c1e;
+  -webkit-appearance: none;
+  min-height: 44px;
+}
+.due-date-input:focus { border-color: #007AFF; background: #fff; }
 
 .modal-actions {
   display: flex;

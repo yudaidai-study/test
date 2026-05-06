@@ -1,24 +1,47 @@
-const CATEGORY_LABEL = { work: '仕事', personal: '個人', urgent: '緊急', other: 'その他' };
+const CATEGORY_LABEL = { work: '仕事', personal: '個人', shopping: '買い物', urgent: '緊急', other: 'その他' };
 const CHECK_ICON = { done: '✓', todo: '○' };
 
-let _filter = 'all';
+// Tabs that don't sort by due date
+const NO_DUEDATE_TABS = new Set(['history', 'shopping']);
+
+let _filter = 'personal';
 
 export const ui = {
-  render(todos) {
+  render(todos, filter = 'all') {
     const list = document.getElementById('todo-list');
     const emptyMsg = document.getElementById('empty-msg');
 
-    // Sort: active first (by createdAt desc), completed last (by completedAt desc)
-    const active = todos.filter(t => !t.completed).sort((a, b) => b.createdAt - a.createdAt);
-    const done   = todos.filter(t =>  t.completed).sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
-    const sorted = [...active, ...done];
+    let sorted;
+
+    if (filter === 'history') {
+      // History: completed tasks only, most recently completed first
+      sorted = [...todos].sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+    } else if (NO_DUEDATE_TABS.has(filter)) {
+      // Shopping: active first (newest), completed last
+      const active = todos.filter(t => !t.completed).sort((a, b) => b.createdAt - a.createdAt);
+      const done   = todos.filter(t =>  t.completed).sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+      sorted = [...active, ...done];
+    } else {
+      // Default: active first sorted by due date asc (null last), completed last
+      const active = todos.filter(t => !t.completed).sort((a, b) => {
+        if (a.dueDate && b.dueDate) return a.dueDate.localeCompare(b.dueDate);
+        if (a.dueDate) return -1;
+        if (b.dueDate) return 1;
+        return b.createdAt - a.createdAt;
+      });
+      const done = todos.filter(t => t.completed).sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+      sorted = [...active, ...done];
+    }
 
     list.innerHTML = sorted.map(t => `
       <li class="todo-item priority-${t.priority} ${t.completed ? 'completed' : ''}" data-id="${t.id}">
         <button class="check-btn" aria-label="${t.completed ? '未完了に戻す' : '完了にする'}">
           ${t.completed ? CHECK_ICON.done : CHECK_ICON.todo}
         </button>
-        <span class="todo-text">${escHtml(t.text)}</span>
+        <div class="todo-body">
+          <span class="todo-text">${escHtml(t.text)}</span>
+          ${t.dueDate ? `<span class="todo-due">${formatDate(t.dueDate)}</span>` : ''}
+        </div>
         <span class="todo-category">${CATEGORY_LABEL[t.category] ?? t.category}</span>
         <button class="delete-btn" aria-label="削除">✕</button>
         <div class="delete-overlay">削除</div>
@@ -50,11 +73,20 @@ export const ui = {
     document.getElementById('new-todo').value = '';
   },
 
-  bindEvents({ onAdd, onToggle, onRemove, onFilterChange }) {
+  bindEvents({ onAdd, onToggle, onRemove, onFilterChange, onPriorityFilterChange }) {
     // Filter tabs
     document.querySelector('.filter-tabs').addEventListener('click', e => {
       const btn = e.target.closest('.tab');
       if (btn) onFilterChange(btn.dataset.filter);
+    });
+
+    // Priority filter chips (multi-select)
+    document.querySelector('.priority-filters').addEventListener('click', e => {
+      const chip = e.target.closest('.pf-chip');
+      if (!chip) return;
+      chip.classList.toggle('active');
+      const selected = [...document.querySelectorAll('.pf-chip.active')].map(c => c.dataset.priority);
+      onPriorityFilterChange(selected);
     });
 
     // Todo list: event delegation
@@ -91,7 +123,8 @@ export const ui = {
     document.querySelectorAll('#priority-group .chip').forEach(c => c.classList.remove('active'));
     document.querySelectorAll('#category-group .chip').forEach(c => c.classList.remove('active'));
     document.querySelector('[data-priority="high"]').classList.add('active');
-    document.querySelector('[data-category="work"]').classList.add('active');
+    document.querySelector('[data-category="personal"]').classList.add('active');
+    document.getElementById('due-date-input').value = '';
 
     const close = () => modal.classList.add('hidden');
 
@@ -115,7 +148,8 @@ export const ui = {
     document.getElementById('modal-ok').onclick = () => {
       const priority = document.querySelector('#priority-group .chip.active')?.dataset.priority ?? 'medium';
       const category = document.querySelector('#category-group .chip.active')?.dataset.category ?? 'other';
-      onAdd({ text, priority, category });
+      const dueDate  = document.getElementById('due-date-input').value || null;
+      onAdd({ text, priority, category, dueDate });
       ui.clearInput();
       close();
     };
@@ -125,6 +159,12 @@ export const ui = {
 function escHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function formatDate(dateStr) {
+  // dateStr is YYYY-MM-DD
+  const [, m, d] = dateStr.split('-');
+  return `${parseInt(m)}/${parseInt(d)}`;
 }
 
 function setupSwipe(onRemove) {
