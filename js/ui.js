@@ -150,10 +150,18 @@ export const ui = {
     document.getElementById('new-todo').value = '';
   },
 
-  bindEvents({ onAdd, onToggle, onRemove, onOrganize, onEdit, onFilterChange, onClearHistory }) {
+  bindEvents({ onAdd, onToggle, onRemove, onOrganize, onEdit, onFilterChange, onClearHistory, onPriorityFilterChange }) {
     document.querySelector('.filter-tabs').addEventListener('click', e => {
       const btn = e.target.closest('.tab');
       if (btn) onFilterChange(btn.dataset.filter);
+    });
+
+    document.querySelector('.priority-filters').addEventListener('click', e => {
+      const chip = e.target.closest('.pf-chip');
+      if (!chip) return;
+      chip.classList.toggle('active');
+      const selected = [...document.querySelectorAll('.pf-chip.active')].map(c => c.dataset.priority);
+      onPriorityFilterChange(selected);
     });
 
     document.getElementById('btn-organize').addEventListener('click', onOrganize);

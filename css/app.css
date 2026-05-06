@@ -16,6 +16,7 @@
   --blue:      #007AFF;
   --red:       #FF3B30;
   --orange:    #FF9500;
+  --amber:     #FFBF00;
   --green:     #34C759;
   --purple:    #AF52DE;
 }
@@ -162,6 +163,34 @@ ul { list-style: none; }
   margin-left: auto;
 }
 
+/* ---------- Priority filter row ---------- */
+.priority-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--sep);
+}
+
+.pf-chip {
+  padding: 4px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--sep);
+  color: var(--text-2);
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  background: var(--surface-2);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.pf-chip.active         { color: #fff; border-color: transparent; }
+.pf-high.active         { background: var(--red); }
+.pf-medium.active       { background: var(--amber); }
+.pf-low.active          { background: var(--text-2); }
+
 /* ---------- Main scroll area ---------- */
 main {
   flex: 1;
@@ -206,8 +235,8 @@ main {
 }
 
 .todo-item.priority-high   { border-left-color: var(--red); }
-.todo-item.priority-medium { border-left-color: var(--surface-3); }
-.todo-item.priority-low    { border-left: none; padding-left: 18px; }
+.todo-item.priority-medium { border-left-color: var(--amber); }
+.todo-item.priority-low    { border-left-color: var(--text-2); }
 
 /* 買い物タスクは左ボーダーなし */
 .todo-item.category-shopping { border-left: none; padding-left: 18px; }
@@ -458,8 +487,8 @@ main {
 }
 .chip.active        { background: var(--blue);   border-color: var(--blue);   color: #fff; }
 .chip-high.active   { background: var(--red);    border-color: var(--red); }
-.chip-medium.active { background: var(--orange); border-color: var(--orange); }
-.chip-low.active    { background: var(--green);  border-color: var(--green); }
+.chip-medium.active { background: var(--amber);  border-color: var(--amber); }
+.chip-low.active    { background: var(--text-2); border-color: var(--text-2); }
 
 /* 買い物カテゴリチップ */
 .chip-shop.active   { background: var(--purple); border-color: var(--purple); }
