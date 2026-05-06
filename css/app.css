@@ -233,7 +233,7 @@ main {
 
 .todo-item.priority-high   { border-left-color: var(--red); }
 .todo-item.priority-medium { border-left-color: var(--amber); }
-.todo-item.priority-low    { border-left-color: var(--text-2); }
+.todo-item.priority-low    { border-left-color: var(--green); }
 
 /* 買い物タスクは左ボーダーなし */
 .todo-item.category-shopping { border-left: none; padding-left: 18px; }
@@ -483,9 +483,9 @@ main {
   align-items: center;
 }
 .chip.active        { background: var(--blue);   border-color: var(--blue);   color: #fff; }
-.chip-high.active   { background: var(--red);    border-color: var(--red); }
-.chip-medium.active { background: var(--amber);  border-color: var(--amber); }
-.chip-low.active    { background: var(--text-2); border-color: var(--text-2); }
+.chip-high.active   { background: var(--blue); border-color: var(--blue); }
+.chip-medium.active { background: var(--blue); border-color: var(--blue); }
+.chip-low.active    { background: var(--blue); border-color: var(--blue); }
 
 /* 買い物カテゴリチップ */
 .chip-shop.active   { background: var(--purple); border-color: var(--purple); }

@@ -2,7 +2,7 @@ import { store } from './store.js';
 import { ui }    from './ui.js';
 
 let currentFilter     = 'personal';
-let currentPriorities = ['high', 'medium'];
+let currentPriorities = ['high', 'medium', 'low'];
 
 function refresh() {
   const all = store.getFiltered(currentFilter);
