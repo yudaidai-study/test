@@ -506,7 +506,7 @@ function setupLongPress(listId, onLongPress) {
       longPressed = true;
       timer = null;
       onLongPress(id);
-    }, 350);
+    }, 250);
   }
   function cancel() { clearTimeout(timer); timer = null; }
 
