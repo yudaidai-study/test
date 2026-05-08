@@ -12,12 +12,20 @@ function dismissReveal() {
 
 const DL_COMPAT = { today: 'soon', later: 'month' };
 
-function deadlineScore(dl) {
-  const d = DL_COMPAT[dl] ?? dl;
-  if (d === 'soon')  return 0;
-  if (d === 'days3') return 3;
-  if (d === 'week')  return 7;
-  if (d === 'month') return 30;
+function deadlineScore(todo) {
+  const dl = todo.deadline;
+  const d  = DL_COMPAT[dl] ?? dl;
+  // ラベル系 (すぐ/今週/今月) は deadlineSortDate(実日付) で比較する
+  if (d === 'soon' || d === 'days3' || d === 'week' || d === 'month') {
+    const sd = todo.deadlineSortDate;
+    if (sd) {
+      return (new Date(sd + 'T00:00:00') - new Date()) / 86400000;
+    }
+    // 古いタスク向けフォールバック
+    if (d === 'soon' || d === 'days3') return 0;
+    if (d === 'week')  return 7;
+    if (d === 'month') return 30;
+  }
   if (d && d !== 'none') {
     const days = (new Date(d + 'T00:00:00') - new Date()) / 86400000;
     return Math.max(0, days) + 50;
@@ -79,9 +87,9 @@ function renderItems(todos, showCompletedDate = false) {
 
 function sortTodos(todos) {
   const active  = todos.filter(t => !t.completed && !t.pendingComplete)
-                       .sort((a, b) => deadlineScore(a.deadline) - deadlineScore(b.deadline));
+                       .sort((a, b) => deadlineScore(a) - deadlineScore(b));
   const pending = todos.filter(t => !t.completed &&  t.pendingComplete)
-                       .sort((a, b) => deadlineScore(a.deadline) - deadlineScore(b.deadline));
+                       .sort((a, b) => deadlineScore(a) - deadlineScore(b));
   const done    = todos.filter(t =>  t.completed)
                        .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
   return [...active, ...pending, ...done];
