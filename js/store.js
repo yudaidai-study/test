@@ -38,6 +38,14 @@ function makeId() {
     : Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
+// 'soon'→3日後, 'week'→7日後, 'month'→30日後 の実日付(YYYY-MM-DD)を返す
+function computeSortDate(deadline, baseTs) {
+  const offsets = { soon: 3, days3: 3, week: 7, month: 30, today: 3, later: 30 };
+  const days = offsets[deadline];
+  if (days == null) return null;
+  return new Date(baseTs + days * 86400000).toISOString().slice(0, 10);
+}
+
 export const store = {
   isStorageAvailable: () => available,
 
@@ -45,6 +53,7 @@ export const store = {
 
   add({ text, priority = 'medium', category = 'personal', deadline = null }) {
     const todos = load();
+    const createdAt = Date.now();
     const todo = {
       id: makeId(),
       text,
@@ -53,7 +62,8 @@ export const store = {
       priority,
       category,
       deadline,
-      createdAt: Date.now(),
+      deadlineSortDate: computeSortDate(deadline, createdAt),
+      createdAt,
       completedAt: null,
     };
     todos.push(todo);
@@ -62,7 +72,14 @@ export const store = {
   },
 
   update(id, changes) {
-    const todos = load().map(t => t.id === id ? { ...t, ...changes } : t);
+    const todos = load().map(t => {
+      if (t.id !== id) return t;
+      const merged = { ...t, ...changes };
+      if ('deadline' in changes) {
+        merged.deadlineSortDate = computeSortDate(changes.deadline, t.createdAt);
+      }
+      return merged;
+    });
     persist(todos);
     return todos;
   },
