@@ -160,6 +160,43 @@ export const ui = {
     }
   },
 
+  updateItem(todo, pendingCount) {
+    const el = document.querySelector(`.todo-item[data-id="${todo.id}"]`);
+    if (!el) return;
+
+    const isDone  = todo.completed || todo.pendingComplete;
+    const overdue = !isDone && deadlineScore(todo) < 0 && todo.deadline && todo.deadline !== 'none';
+    const dueSoon = !overdue && isDueSoon(todo) && !isDone;
+
+    el.classList.remove('completed', 'pending-complete', 'due-soon', 'overdue');
+    if (todo.completed)       el.classList.add('completed');
+    if (todo.pendingComplete) el.classList.add('pending-complete');
+    if (dueSoon)              el.classList.add('due-soon');
+    if (overdue)              el.classList.add('overdue');
+
+    const checkBtn = el.querySelector('.check-btn');
+    checkBtn.setAttribute('aria-label', isDone ? '未完了に戻す' : '完了にする');
+    checkBtn.textContent = isDone ? '✓' : '○';
+
+    const todoMeta = el.querySelector('.todo-meta');
+    if (todoMeta) {
+      const existing = todoMeta.querySelector('.todo-deadline, .completed-date');
+      const newHtml  = deadlineHtml(todo);
+      if (existing) {
+        if (newHtml) existing.outerHTML = newHtml;
+        else         existing.remove();
+      } else if (newHtml) {
+        todoMeta.insertAdjacentHTML('beforeend', newHtml);
+      }
+    }
+
+    const organizeBtn = document.getElementById('btn-organize');
+    if (organizeBtn) {
+      organizeBtn.textContent = pendingCount > 0 ? `整理 (${pendingCount})` : '整理';
+      organizeBtn.disabled    = pendingCount === 0;
+    }
+  },
+
   setFilter(filter) {
     _filter = filter;
     document.querySelectorAll('.tab').forEach(btn => {

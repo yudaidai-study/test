@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     onToggle(id) {
       store.toggle(id);
-      refresh();
+      const todo = store.getAll().find(t => t.id === id);
+      if (todo) ui.updateItem(todo, store.getPendingCount());
     },
     onRemove(id) {
       store.remove(id);
