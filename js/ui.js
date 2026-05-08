@@ -44,6 +44,9 @@ function deadlineHtml(todo) {
   const dl = todo.deadline;
   const d  = DL_COMPAT[dl] ?? dl;
   if (!d || d === 'none') return '';
+  if (!todo.completed && !todo.pendingComplete && deadlineScore(todo) < 0) {
+    return '<span class="todo-deadline overdue">☠ 期限切れ</span>';
+  }
   if ((d === 'soon' || d === 'days3' || d === 'week' || d === 'month') && todo.deadlineSortDate) {
     const daysLeft = (new Date(todo.deadlineSortDate + 'T00:00:00') - new Date()) / 86400000;
     return _labelFromDaysLeft(daysLeft);
@@ -83,12 +86,13 @@ function renderItems(todos, showCompletedDate = false) {
   return todos.map(t => {
     const isDone     = t.completed || t.pendingComplete;
     const stateClass = t.completed ? ' completed' : (t.pendingComplete ? ' pending-complete' : '');
-    const dueSoon    = isDueSoon(t) && !t.completed && !t.pendingComplete;
+    const overdue    = !isDone && deadlineScore(t) < 0 && t.deadline && t.deadline !== 'none';
+    const dueSoon    = !overdue && isDueSoon(t) && !isDone;
     const metaSecondary = showCompletedDate && t.completedAt
       ? `<span class="completed-date">完了: ${formatDate(t.completedAt)}</span>`
       : deadlineHtml(t);
     return `
-      <li class="todo-item priority-${t.priority} category-${t.category}${stateClass}${dueSoon ? ' due-soon' : ''}" data-id="${t.id}">
+      <li class="todo-item priority-${t.priority} category-${t.category}${stateClass}${dueSoon ? ' due-soon' : ''}${overdue ? ' overdue' : ''}" data-id="${t.id}">
         <button class="check-btn" aria-label="${isDone ? '未完了に戻す' : '完了にする'}">
           ${isDone ? '✓' : '○'}
         </button>
