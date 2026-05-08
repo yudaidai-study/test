@@ -1,4 +1,4 @@
-const CACHE = 'todo-v16';
+const CACHE = 'todo-v17';
 const ASSETS = [
   '/01_ToDoApp/',
   '/01_ToDoApp/index.html',
