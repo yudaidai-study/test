@@ -217,9 +217,7 @@ export const ui = {
 
     const close = () => modal.classList.add('hidden');
     document.getElementById('comment-cancel').onclick = close;
-    // 長押し解放時の合成クリックでモーダルが即閉じしないよう遅延してから登録
-    modal.onclick = null;
-    setTimeout(() => { modal.onclick = e => { if (e.target === modal) close(); }; }, 300);
+    modal.onclick = e => { if (e.target === modal) close(); };
     document.getElementById('comment-ok').onclick = () => {
       onSave(textarea.value.trim());
       close();
@@ -505,6 +503,7 @@ function setupLongPress(listId, onLongPress) {
     timer = setTimeout(() => {
       longPressed = true;
       timer = null;
+      window.getSelection()?.removeAllRanges();
       onLongPress(id);
     }, 250);
   }
@@ -521,7 +520,13 @@ function setupLongPress(listId, onLongPress) {
     const dy = Math.abs(e.touches[0].clientY - startY);
     if (dx > 8 || dy > 8) cancel();
   }, { passive: true });
-  list.addEventListener('touchend',   cancel, { passive: true });
+  list.addEventListener('touchend', e => {
+    cancel();
+    if (longPressed) {
+      e.preventDefault(); // 長押し後の合成クリックを抑制してモーダルへの誤爆を防ぐ
+      longPressed = false;
+    }
+  }, { passive: false });
   list.addEventListener('touchcancel', cancel, { passive: true });
 
   list.addEventListener('mousedown', e => {
