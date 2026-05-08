@@ -538,13 +538,19 @@ main {
 }
 .edit-textarea:focus { border-color: var(--blue); }
 
+/* Category row: dot + label side by side */
+.todo-cat-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 /* Comment indicator dot */
 .comment-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--blue);
-  align-self: flex-end;
   flex-shrink: 0;
 }
 

@@ -99,9 +99,11 @@ function renderItems(todos, showCompletedDate = false) {
         </button>
         <span class="todo-text">${escHtml(t.text)}</span>
         <div class="todo-meta">
-          <span class="todo-category">${escHtml(CATEGORY_LABEL[t.category] ?? t.category)}</span>
+          <div class="todo-cat-row">
+            ${commentDot}
+            <span class="todo-category">${escHtml(CATEGORY_LABEL[t.category] ?? t.category)}</span>
+          </div>
           ${metaSecondary}
-          ${commentDot}
         </div>
         <div class="delete-overlay">削除</div>
       </li>
@@ -190,9 +192,10 @@ export const ui = {
       } else if (newHtml) {
         todoMeta.insertAdjacentHTML('beforeend', newHtml);
       }
-      const existingDot = todoMeta.querySelector('.comment-dot');
+      const catRow = todoMeta.querySelector('.todo-cat-row');
+      const existingDot = catRow?.querySelector('.comment-dot');
       if (todo.comment && !existingDot) {
-        todoMeta.insertAdjacentHTML('beforeend', '<span class="comment-dot" aria-label="コメントあり"></span>');
+        catRow?.insertAdjacentHTML('afterbegin', '<span class="comment-dot" aria-label="コメントあり"></span>');
       } else if (!todo.comment && existingDot) {
         existingDot.remove();
       }
@@ -214,7 +217,9 @@ export const ui = {
 
     const close = () => modal.classList.add('hidden');
     document.getElementById('comment-cancel').onclick = close;
-    modal.onclick = e => { if (e.target === modal) close(); };
+    // 長押し解放時の合成クリックでモーダルが即閉じしないよう遅延してから登録
+    modal.onclick = null;
+    setTimeout(() => { modal.onclick = e => { if (e.target === modal) close(); }; }, 300);
     document.getElementById('comment-ok').onclick = () => {
       onSave(textarea.value.trim());
       close();
@@ -501,7 +506,7 @@ function setupLongPress(listId, onLongPress) {
       longPressed = true;
       timer = null;
       onLongPress(id);
-    }, 500);
+    }, 350);
   }
   function cancel() { clearTimeout(timer); timer = null; }
 
