@@ -27,8 +27,7 @@ function deadlineScore(todo) {
     if (d === 'month') return 30;
   }
   if (d && d !== 'none') {
-    const days = (new Date(d + 'T00:00:00') - new Date()) / 86400000;
-    return Math.max(0, days) + 50;
+    return (new Date(d + 'T00:00:00') - new Date()) / 86400000;
   }
   return Infinity;
 }
