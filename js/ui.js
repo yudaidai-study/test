@@ -104,10 +104,13 @@ function renderItems(todos, showCompletedDate = false) {
 }
 
 function sortTodos(todos) {
-  const active  = todos.filter(t => !t.completed && !t.pendingComplete)
-                       .sort((a, b) => deadlineScore(a) - deadlineScore(b));
-  const pending = todos.filter(t => !t.completed &&  t.pendingComplete)
-                       .sort((a, b) => deadlineScore(a) - deadlineScore(b));
+  function byDeadline(a, b) {
+    const sa = deadlineScore(a), sb = deadlineScore(b);
+    if (sa !== sb) return sa - sb;
+    return b.createdAt - a.createdAt; // 期限が同じ(無期限含む)は新しい順
+  }
+  const active  = todos.filter(t => !t.completed && !t.pendingComplete).sort(byDeadline);
+  const pending = todos.filter(t => !t.completed &&  t.pendingComplete).sort(byDeadline);
   const done    = todos.filter(t =>  t.completed)
                        .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
   return [...active, ...pending, ...done];
