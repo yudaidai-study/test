@@ -505,6 +505,7 @@ function setupLongPress(listId, onLongPress) {
     timer = setTimeout(() => {
       longPressed = true;
       timer = null;
+      window.getSelection()?.removeAllRanges();
       onLongPress(id);
     }, 250);
   }
