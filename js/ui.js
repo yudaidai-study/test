@@ -33,9 +33,22 @@ function deadlineScore(todo) {
   return Infinity;
 }
 
-function deadlineHtml(dl) {
-  const d = DL_COMPAT[dl] ?? dl;
+// ラベル系(soon/week/month)で deadlineSortDate がある場合、残日数から表示ラベルを動的に決定する
+// 残3日未満→すぐ、残7日未満→今週まで、それ以上→今月まで
+function _labelFromDaysLeft(daysLeft) {
+  if (daysLeft < 3) return '<span class="todo-deadline">すぐ</span>';
+  if (daysLeft < 7) return '<span class="todo-deadline">今週まで</span>';
+  return '<span class="todo-deadline">今月まで</span>';
+}
+
+function deadlineHtml(todo) {
+  const dl = todo.deadline;
+  const d  = DL_COMPAT[dl] ?? dl;
   if (!d || d === 'none') return '';
+  if ((d === 'soon' || d === 'days3' || d === 'week' || d === 'month') && todo.deadlineSortDate) {
+    const daysLeft = (new Date(todo.deadlineSortDate + 'T00:00:00') - new Date()) / 86400000;
+    return _labelFromDaysLeft(daysLeft);
+  }
   if (d === 'soon' || d === 'days3') return '<span class="todo-deadline">すぐ</span>';
   if (d === 'week')  return '<span class="todo-deadline">今週まで</span>';
   if (d === 'month') return '<span class="todo-deadline">今月まで</span>';
@@ -43,10 +56,16 @@ function deadlineHtml(dl) {
   return `<span class="todo-deadline">${date.getMonth() + 1}/${date.getDate()}まで</span>`;
 }
 
-function isDueSoon(dl) {
+function isDueSoon(todo) {
+  const dl = todo.deadline;
   if (!dl || dl === 'none') return false;
-  if (dl === 'soon' || dl === 'days3' || dl === 'today') return true;
-  if (dl === 'week' || dl === 'month' || dl === 'later') return false;
+  const d = DL_COMPAT[dl] ?? dl;
+  if ((d === 'soon' || d === 'days3' || d === 'week' || d === 'month') && todo.deadlineSortDate) {
+    const daysLeft = (new Date(todo.deadlineSortDate + 'T00:00:00') - new Date()) / 86400000;
+    return daysLeft < 3;
+  }
+  if (d === 'soon' || d === 'days3' || d === 'today') return true;
+  if (d === 'week' || d === 'month' || d === 'later') return false;
   const days = (new Date(dl + 'T00:00:00') - new Date()) / 86400000;
   return days <= 3;
 }
@@ -65,10 +84,10 @@ function renderItems(todos, showCompletedDate = false) {
   return todos.map(t => {
     const isDone     = t.completed || t.pendingComplete;
     const stateClass = t.completed ? ' completed' : (t.pendingComplete ? ' pending-complete' : '');
-    const dueSoon    = isDueSoon(t.deadline) && !t.completed && !t.pendingComplete;
+    const dueSoon    = isDueSoon(t) && !t.completed && !t.pendingComplete;
     const metaSecondary = showCompletedDate && t.completedAt
       ? `<span class="completed-date">完了: ${formatDate(t.completedAt)}</span>`
-      : deadlineHtml(t.deadline);
+      : deadlineHtml(t);
     return `
       <li class="todo-item priority-${t.priority} category-${t.category}${stateClass}${dueSoon ? ' due-soon' : ''}" data-id="${t.id}">
         <button class="check-btn" aria-label="${isDone ? '未完了に戻す' : '完了にする'}">
