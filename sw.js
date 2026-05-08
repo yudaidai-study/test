@@ -1,16 +1,16 @@
 const CACHE = 'todo-v12';
 const ASSETS = [
-  '/test/',
-  '/test/index.html',
-  '/test/manifest.json',
-  '/test/css/app.css',
-  '/test/js/app.js',
-  '/test/js/store.js',
-  '/test/js/ui.js',
-  '/test/js/sw-register.js',
-  '/test/icons/apple-touch-icon.png',
-  '/test/icons/icon-192.png',
-  '/test/icons/icon-512.png',
+  '/01_ToDoApp/',
+  '/01_ToDoApp/index.html',
+  '/01_ToDoApp/manifest.json',
+  '/01_ToDoApp/css/app.css',
+  '/01_ToDoApp/js/app.js',
+  '/01_ToDoApp/js/store.js',
+  '/01_ToDoApp/js/ui.js',
+  '/01_ToDoApp/js/sw-register.js',
+  '/01_ToDoApp/icons/apple-touch-icon.png',
+  '/01_ToDoApp/icons/icon-192.png',
+  '/01_ToDoApp/icons/icon-512.png',
 ];
 
 self.addEventListener('install', e => {
@@ -41,7 +41,7 @@ self.addEventListener('fetch', e => {
         return res;
       }).catch(() => {
         // Offline fallback for navigation requests
-        if (e.request.mode === 'navigate') return caches.match('/test/index.html');
+        if (e.request.mode === 'navigate') return caches.match('/01_ToDoApp/index.html');
       });
     })
   );
